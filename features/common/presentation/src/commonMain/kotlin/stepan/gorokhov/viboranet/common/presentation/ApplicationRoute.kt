@@ -1,0 +1,8 @@
+package stepan.gorokhov.viboranet.common.presentation
+
+import stepan.gorokhov.viboranet.coreui.routing.BaseRoute
+
+sealed class ApplicationRoute(override val route: String) : BaseRoute {
+    data object Auth : ApplicationRoute("auth")
+    data object Tests : ApplicationRoute("tests")
+}
