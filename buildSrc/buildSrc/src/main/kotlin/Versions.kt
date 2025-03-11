@@ -46,4 +46,12 @@ object Versions {
     object Koin {
         const val version = "4.0.0"
     }
+
+    object Ktor {
+        const val version = "2.3.12"
+    }
+
+    object Datastore {
+        const val version = "1.1.1"
+    }
 }

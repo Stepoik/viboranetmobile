@@ -43,6 +43,15 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(projects.uikit)
+            implementation(projects.features.common.presentation)
+            implementation(projects.root)
+            implementation(Dependencies.Compose.navigation)
+            implementation(Dependencies.Koin.core)
+            //Features
+            implementation(projects.features.splash)
+            implementation(projects.features.auth.presentation)
+            implementation(projects.features.tests.presentation)
         }
     }
 }

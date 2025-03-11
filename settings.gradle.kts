@@ -38,9 +38,14 @@ include(":features:tests:api")
 include(":features:tests:data")
 include(":features:tests:presentation")
 
+include(":features:splash")
 
+include(":features:common:api")
+include(":features:common:data")
 include(":features:common:presentation")
 
-include("core")
-include("core-ui")
-include("uikit")
+include(":core-data")
+include(":core")
+include(":core-ui")
+include(":uikit")
+include(":root")

@@ -37,4 +37,16 @@ object Dependencies {
         const val koinCompose = "io.insert-koin:koin-compose:${Versions.Koin.version}"
         const val viewModel = "io.insert-koin:koin-compose-viewmodel:${Versions.Koin.version}"
     }
+
+    object Ktor {
+        const val clientCore = "io.ktor:ktor-client-core:${Versions.Ktor.version}"
+        const val clientOkHttp = "io.ktor:ktor-client-okhttp:${Versions.Ktor.version}"
+        const val clientDarwin = "io.ktor:ktor-client-darwin:${Versions.Ktor.version}"
+        const val serialization = "io.ktor:ktor-serialization-kotlinx-json:${Versions.Ktor.version}"
+        const val contentNegotiation = "io.ktor:ktor-client-content-negotiation:${Versions.Ktor.version}"
+    }
+
+    object Datastore {
+        const val core = "androidx.datastore:datastore-preferences-core:${Versions.Datastore.version}"
+    }
 }

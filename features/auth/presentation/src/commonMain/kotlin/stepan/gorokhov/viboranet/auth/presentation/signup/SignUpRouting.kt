@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import stepan.gorokhov.viboranet.auth.presentation.AuthRoute
 
-fun NavGraphBuilder.signUp(navController: NavController) {
+internal fun NavGraphBuilder.signUp(navController: NavController) {
     composable(AuthRoute.SignUp.route) {
         SignUpScreen(navController)
     }
