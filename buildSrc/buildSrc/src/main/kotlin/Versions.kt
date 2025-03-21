@@ -1,8 +1,8 @@
 object Versions {
     object Android {
         const val version = "8.5.2"
-        const val compileSdk = 34
-        const val targetSdk = 34
+        const val compileSdk = 35
+        const val targetSdk = 35
         const val minSdk = 28
     }
 
@@ -53,5 +53,9 @@ object Versions {
 
     object Datastore {
         const val version = "1.1.1"
+    }
+
+    object Coil {
+        const val version = "3.1.0"
     }
 }

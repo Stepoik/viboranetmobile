@@ -13,6 +13,7 @@ data class MainTestsState(
     val loading: Boolean = false,
     val refreshing: Boolean = false,
     val recommended: ImmutableList<TestPreview> = persistentListOf(),
+    val popular: ImmutableList<TestPreview> = persistentListOf(),
     val error: ErrorMessage? = null
 ) : ViewModelState<MainTestsState>, UIState {
     override fun toScreenState(): MainTestsState {

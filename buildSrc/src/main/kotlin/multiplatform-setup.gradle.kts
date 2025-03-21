@@ -1,7 +1,5 @@
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.kotlin.plugin.compose")
-    id("org.jetbrains.compose")
     id("com.android.library")
 }
 
@@ -44,11 +42,8 @@ android {
             isMinifyEnabled = true
         }
     }
-    buildFeatures {
-        compose = true
-    }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
