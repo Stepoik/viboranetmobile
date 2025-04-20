@@ -1,4 +1,0 @@
-<resources>
-    <string name="error_loading_tests">Ошибка при загрузке тестов</string>
-    <string name="error_loading_test">Ошибка при загрузке теста</string>
-</resources>

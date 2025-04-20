@@ -10,3 +10,7 @@ internal fun NavGraphBuilder.signIn(navController: NavController) {
         SignInScreen(navController)
     }
 }
+
+internal fun NavController.navigateSignIn() {
+    navigate(AuthRoute.SignIn.route)
+}

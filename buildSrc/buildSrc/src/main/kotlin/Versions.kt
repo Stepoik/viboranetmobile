@@ -58,4 +58,16 @@ object Versions {
     object Coil {
         const val version = "3.1.0"
     }
+
+    object Room {
+        const val version = "2.7.0-alpha10"
+
+        object Sqlite {
+            const val version = "2.5.0-alpha04"
+        }
+    }
+
+    object KSP {
+        const val version = "2.1.10-1.0.29"
+    }
 }

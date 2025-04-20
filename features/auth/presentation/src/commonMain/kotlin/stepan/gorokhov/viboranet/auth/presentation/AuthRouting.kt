@@ -8,8 +8,8 @@ import stepan.gorokhov.viboranet.auth.presentation.signup.signUp
 import stepan.gorokhov.viboranet.common.presentation.ApplicationRoute
 
 fun NavGraphBuilder.auth(navController: NavController) {
-   navigation(route = ApplicationRoute.Auth.route, startDestination = AuthRoute.SignIn.route) {
-       signIn(navController)
-       signUp(navController)
-   }
+    navigation(route = ApplicationRoute.Auth.route, startDestination = AuthRoute.SignUp.route) {
+        signIn(navController)
+        signUp(navController)
+    }
 }

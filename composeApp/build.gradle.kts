@@ -51,7 +51,7 @@ kotlin {
             //Features
             implementation(projects.features.splash)
             implementation(projects.features.auth.presentation)
-            implementation(projects.features.tests.presentation)
+            implementation(projects.features.home.flow)
         }
     }
 }

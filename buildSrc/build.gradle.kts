@@ -16,6 +16,8 @@ dependencies {
     implementation(Dependencies.Kotlin.Serialization.gradlePlugin)
     implementation(Dependencies.Compose.gradlePlugin)
     implementation(Dependencies.Compose.Compiler.gradlePlugin)
+    implementation(Dependencies.KSP.gradlePlugin)
+    implementation(Dependencies.Room.gradlePlugin)
 }
 
 kotlin {

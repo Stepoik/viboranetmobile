@@ -7,6 +7,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.coreUi)
             implementation(projects.features.common.presentation)
+            implementation(projects.features.common.api)
         }
     }
 }

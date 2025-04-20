@@ -6,6 +6,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.features.common.api)
+            implementation(projects.database)
 //            implementation(projects.coreData)
         }
     }

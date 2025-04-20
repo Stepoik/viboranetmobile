@@ -52,5 +52,18 @@ object Dependencies {
 
     object Coil {
         const val compose = "io.coil-kt.coil3:coil-compose:${Versions.Coil.version}"
+        const val ktor = "io.coil-kt.coil3:coil-network-ktor2:${Versions.Coil.version}"
+    }
+
+    object Room {
+        const val roomCompiler = "androidx.room:room-compiler:${Versions.Room.version}"
+        const val roomRuntime = "androidx.room:room-runtime:${Versions.Room.version}"
+        const val sqlite = "androidx.sqlite:sqlite:${Versions.Room.Sqlite.version}"
+        const val sqliteBundled = "androidx.sqlite:sqlite-bundled:${Versions.Room.Sqlite.version}"
+        const val gradlePlugin = "androidx.room:room-gradle-plugin:${Versions.Room.version}"
+    }
+
+    object KSP {
+        const val gradlePlugin = "com.google.devtools.ksp:symbol-processing-gradle-plugin:${Versions.KSP.version}"
     }
 }
