@@ -66,4 +66,14 @@ object Dependencies {
     object KSP {
         const val gradlePlugin = "com.google.devtools.ksp:symbol-processing-gradle-plugin:${Versions.KSP.version}"
     }
+
+    object Firebase {
+        const val auth = "dev.gitlive:firebase-auth:${Versions.Firebase.version}"
+    }
+
+    object Google {
+        object GMS {
+            const val gradlePlugin = "com.google.gms.google-services:com.google.gms.google-services.gradle.plugin:${Versions.Google.GMS.version}"
+        }
+    }
 }

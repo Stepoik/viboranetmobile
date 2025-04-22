@@ -7,11 +7,11 @@ plugins {
     id(Plugins.Android.application)
     id(Plugins.Compose.multiplatform)
     id(Plugins.Compose.compiler)
+    id(Plugins.Google.gms)
 }
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -52,6 +52,8 @@ kotlin {
             implementation(projects.features.splash)
             implementation(projects.features.auth.presentation)
             implementation(projects.features.home.flow)
+            //Firebase
+            implementation(Dependencies.Firebase.auth)
         }
     }
 }

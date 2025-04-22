@@ -9,6 +9,4 @@ interface UserRepository {
     suspend fun updateUser(): Result<Any?>
 
     suspend fun getUser(): Result<User>
-
-    suspend fun clearUser(): Result<Any?>
 }

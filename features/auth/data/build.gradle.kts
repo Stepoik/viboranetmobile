@@ -7,6 +7,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.database)
             implementation(projects.features.auth.api)
+            implementation(Dependencies.Firebase.auth)
         }
     }
 }

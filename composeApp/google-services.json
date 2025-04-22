@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "189370586678",
+    "project_id": "zovzov-63d9f",
+    "storage_bucket": "zovzov-63d9f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:189370586678:android:ed64660952771f43ae2a97",
+        "android_client_info": {
+          "package_name": "stepan.gorokhov.viboranet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxOhBfnwkVqoDYvp6PIknZ5cJYHTESzs0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

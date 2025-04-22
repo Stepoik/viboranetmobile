@@ -18,6 +18,7 @@ dependencies {
     implementation(Dependencies.Compose.Compiler.gradlePlugin)
     implementation(Dependencies.KSP.gradlePlugin)
     implementation(Dependencies.Room.gradlePlugin)
+    implementation(Dependencies.Google.GMS.gradlePlugin)
 }
 
 kotlin {
