@@ -7,12 +7,12 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import stepan.gorokhov.viboranet.coreui.models.ErrorMessage
 import stepan.gorokhov.viboranet.coreui.mvi.BaseViewModel
-import stepan.gorokhov.viboranet.tests.api.repositories.TestPreviewRepository
+import stepan.gorokhov.viboranet.tests.api.repositories.TestRepository
 import viboranet.features.home.tests.presentation.generated.resources.Res
 import viboranet.features.home.tests.presentation.generated.resources.error_loading_tests
 
 class MainTestsViewModel(
-    private val previewRepository: TestPreviewRepository
+    private val testRepository: TestRepository
 ) : BaseViewModel<MainTestsState, MainTestsState, MainTestsEffect, MainTestsEvent>() {
     override fun getInitialState(): MainTestsState {
         return MainTestsState()
@@ -46,7 +46,7 @@ class MainTestsViewModel(
     }
 
     private suspend fun updateTests() {
-        val result = previewRepository.getTestPreviews()
+        val result = testRepository.getTestPreviews()
         result.onSuccess { previews ->
             _state.update { it.copy(tests = previews.map { it.toVO() }.toImmutableList()) }
         }.onFailure {

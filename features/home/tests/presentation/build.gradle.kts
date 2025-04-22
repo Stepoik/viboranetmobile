@@ -13,6 +13,7 @@ kotlin {
             implementation(projects.uikit)
             implementation(projects.features.home.route)
             implementation(projects.features.home.tests.api)
+            implementation(projects.features.home.tests.domain)
             implementation(projects.features.home.tests.data)
 
             implementation(Dependencies.Coil.compose)

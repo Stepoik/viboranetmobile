@@ -21,6 +21,7 @@ import stepan.gorokhov.viboranet.coreui.mvi.EventHandler
 import stepan.gorokhov.viboranet.coreui.mvi.rememberUIEventHandler
 import stepan.gorokhov.viboranet.tests.presentation.main.components.SearchButton
 import stepan.gorokhov.viboranet.tests.presentation.main.components.tests
+import stepan.gorokhov.viboranet.tests.presentation.ongoingTest.navigateOngoingTest
 import stepan.gorokhov.viboranet.tests.presentation.testpreview.navigateTestPreview
 import stepan.gorokhov.viboranet.uikit.components.BaseScaffold
 import stepan.gorokhov.viboranet.uikit.components.verticalSpacer
@@ -36,7 +37,7 @@ fun MainTestsScreen(navController: NavController) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is MainTestsEffect.NavigateTest -> {
-                    navController.navigateTestPreview(effect.id)
+                    navController.navigateOngoingTest(effect.id)
                 }
 
                 is MainTestsEffect.NavigateSearch -> {
@@ -83,7 +84,9 @@ internal fun MainTestsScreen(state: MainTestsState, eventHandler: EventHandler<M
             )
             LazyColumn(Modifier.fillMaxSize().weight(1f)) {
                 verticalSpacer(16.dp)
-                tests(state.tests, onTestClicked = {})
+                tests(
+                    state.tests,
+                    onTestClicked = { eventHandler.sendEvent(MainTestsEvent.TestClicked(it)) })
             }
         }
     }

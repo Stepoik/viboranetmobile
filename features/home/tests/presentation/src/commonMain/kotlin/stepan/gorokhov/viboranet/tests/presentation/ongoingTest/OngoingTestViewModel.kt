@@ -1,32 +1,60 @@
 package stepan.gorokhov.viboranet.tests.presentation.ongoingTest
 
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.update
+import org.jetbrains.compose.resources.getString
+import stepan.gorokhov.viboranet.coreui.models.ErrorMessage
 import stepan.gorokhov.viboranet.coreui.mvi.BaseViewModel
 import stepan.gorokhov.viboranet.coreui.mvi.ViewModelState
+import stepan.gorokhov.viboranet.tests.domain.ongoingTest.OngoingTestInteractor
+import stepan.gorokhov.viboranet.tests.domain.ongoingTest.OngoingTestInteractorState
+import stepan.gorokhov.viboranet.tests.presentation.TestsRoutesArguments
+import viboranet.features.home.tests.presentation.generated.resources.Res
+import viboranet.features.home.tests.presentation.generated.resources.error_loading_test
 
-class OngoingTestViewModel :
-    BaseViewModel<OngoingTestState, OngoingTestState, OngoingTestEffect, OngoingTestEvent>() {
-    override fun sendEvent(event: OngoingTestEvent) {
+internal class OngoingTestViewModel(
+    private val savedStateHandle: SavedStateHandle,
+    private val ongoingTestInteractor: OngoingTestInteractor
+) : BaseViewModel<OngoingTestState, OngoingTestViewModelState, OngoingTestEffect, OngoingTestEvent>() {
+    private val testId = savedStateHandle[TestsRoutesArguments.ID] ?: ""
 
-    }
-
-    override fun getInitialState(): OngoingTestState {
-        TODO("Not yet implemented")
-    }
-}
-
-private data class OngoingTestViewModelState(
-    val isLoading: Boolean = false,
-    val currentStage: Int = 0,
-    val stageCount: Int = 0,
-    val currentChoiceIndex: Int = 0,
-    val choiceCount: Int = 0,
-    val currentChoice: Pair<TestOption, TestOption>? = null,
-    val pickedOptionId: String? = null
-) : ViewModelState<OngoingTestState> {
-    override fun toScreenState(): OngoingTestState {
-        when {
-            isLoading -> OngoingTestState.Loading
-
+    init {
+        viewModelScope.launch {
+            ongoingTestInteractor.state.collect { interactorState ->
+                if (interactorState is OngoingTestInteractorState.Finished) {
+                    navigateResult(interactorState.resultId)
+                }
+                _state.update { it.copy(interactorState = interactorState) }
+            }
         }
+    }
+
+    override fun sendEvent(event: OngoingTestEvent) {
+        viewModelScope.launch {
+            when (event) {
+                is OngoingTestEvent.StartTest -> startTest()
+                is OngoingTestEvent.OptionPicked -> pickOption(event.id)
+            }
+        }
+    }
+
+    override fun getInitialState(): OngoingTestViewModelState {
+        return OngoingTestViewModelState()
+    }
+
+    private suspend fun startTest() {
+        ongoingTestInteractor.startTest(testId).onFailure {
+            _state.update { it.copy(error = ErrorMessage(getString(Res.string.error_loading_test))) }
+        }
+    }
+
+    private suspend fun pickOption(id: String) {
+        ongoingTestInteractor.pickOption(id)
+    }
+
+    private suspend fun navigateResult(resultId: String) {
+        _effect.emit(OngoingTestEffect.NavigateResult(resultId))
     }
 }

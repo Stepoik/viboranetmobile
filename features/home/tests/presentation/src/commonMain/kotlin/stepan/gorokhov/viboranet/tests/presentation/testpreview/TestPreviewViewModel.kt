@@ -7,14 +7,14 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import stepan.gorokhov.viboranet.coreui.models.ErrorMessage
 import stepan.gorokhov.viboranet.coreui.mvi.BaseViewModel
-import stepan.gorokhov.viboranet.tests.api.repositories.TestPreviewRepository
+import stepan.gorokhov.viboranet.tests.api.repositories.TestRepository
 import stepan.gorokhov.viboranet.tests.presentation.TestsRoutesArguments
 import viboranet.features.home.tests.presentation.generated.resources.Res
 import viboranet.features.home.tests.presentation.generated.resources.error_loading_test
 
 class TestPreviewViewModel(
     private val savedStateHandle: SavedStateHandle,
-    private val previewRepository: TestPreviewRepository
+    private val previewRepository: TestRepository
 ) : BaseViewModel<TestPreviewState, TestPreviewViewModelState, TestPreviewEffect, TestPreviewEvent>() {
     private val testId = savedStateHandle[TestsRoutesArguments.ID] ?: ""
 

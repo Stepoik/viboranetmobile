@@ -37,14 +37,15 @@ include(":features:auth:presentation")
 
 include(":features:home:flow")
 include(":features:home:route")
+
 include(":features:home:tests:api")
+include(":features:home:tests:domain")
 include(":features:home:tests:data")
 include(":features:home:tests:presentation")
 
 include(":features:splash")
 
 include(":features:common:api")
-include(":features:common:domain")
 include(":features:common:data")
 include(":features:common:presentation")
 

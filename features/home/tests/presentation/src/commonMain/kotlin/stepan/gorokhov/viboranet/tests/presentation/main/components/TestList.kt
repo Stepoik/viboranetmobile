@@ -38,12 +38,20 @@ internal fun LazyListScope.tests(
     onTestClicked: (String) -> Unit,
 ) {
     items(tests) { test ->
-        TestPreviewItem(test, modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp))
+        TestPreviewItem(
+            test,
+            onTestClicked = { onTestClicked(test.id) },
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+        )
     }
 }
 
 @Composable
-internal fun TestPreviewItem(test: TestPreviewVO, modifier: Modifier = Modifier) {
+internal fun TestPreviewItem(
+    test: TestPreviewVO,
+    onTestClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
@@ -79,7 +87,7 @@ internal fun TestPreviewItem(test: TestPreviewVO, modifier: Modifier = Modifier)
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    BaseButton(stringResource(Res.string.start), onClick = {})
+                    BaseButton(stringResource(Res.string.start), onClick = onTestClicked)
                 }
             }
             AsyncImage(
