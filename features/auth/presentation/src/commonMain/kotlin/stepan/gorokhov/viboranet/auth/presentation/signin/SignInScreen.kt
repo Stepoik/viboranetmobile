@@ -24,6 +24,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import stepan.gorokhov.viboranet.common.presentation.ApplicationRoute
 import stepan.gorokhov.viboranet.coreui.mvi.rememberUIEventHandler
+import stepan.gorokhov.viboranet.coreui.routing.popUpGraph
 import stepan.gorokhov.viboranet.uikit.components.BaseButton
 import stepan.gorokhov.viboranet.uikit.components.BaseScaffold
 import stepan.gorokhov.viboranet.uikit.components.TextFieldWithIcon
@@ -43,7 +44,9 @@ fun SignInScreen(navController: NavController) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is SignInEffect.NavigateBack -> navController.navigateUp()
-                is SignInEffect.NavigateHome -> navController.navigate(ApplicationRoute.Home.route)
+                is SignInEffect.NavigateHome -> navController.navigate(ApplicationRoute.Home.route) {
+                    popUpGraph()
+                }
             }
         }
     }

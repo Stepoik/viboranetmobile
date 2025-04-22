@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import org.koin.compose.viewmodel.koinViewModel
 import stepan.gorokhov.viboranet.common.presentation.ApplicationRoute
+import stepan.gorokhov.viboranet.coreui.routing.popUpGraph
 
 @Composable
 fun SplashScreen(navController: NavController) {
@@ -17,11 +18,11 @@ fun SplashScreen(navController: NavController) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is SplashEffect.NavigateAuth -> {
-                    navController.navigate(ApplicationRoute.Auth.route)
+                    navController.navigate(ApplicationRoute.Auth.route) { popUpGraph() }
                 }
 
                 is SplashEffect.NavigateTests -> {
-                    navController.navigate(ApplicationRoute.Home.route)
+                    navController.navigate(ApplicationRoute.Home.route) { popUpGraph() }
                 }
             }
         }

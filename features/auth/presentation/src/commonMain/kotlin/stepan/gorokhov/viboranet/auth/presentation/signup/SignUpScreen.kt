@@ -27,6 +27,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import stepan.gorokhov.viboranet.auth.presentation.signin.navigateSignIn
 import stepan.gorokhov.viboranet.common.presentation.ApplicationRoute
 import stepan.gorokhov.viboranet.coreui.mvi.rememberUIEventHandler
+import stepan.gorokhov.viboranet.coreui.routing.popUpGraph
 import stepan.gorokhov.viboranet.uikit.components.BaseButton
 import stepan.gorokhov.viboranet.uikit.components.BaseScaffold
 import stepan.gorokhov.viboranet.uikit.components.TextFieldWithIcon
@@ -49,7 +50,9 @@ fun SignUpScreen(navController: NavController) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is SignUpEffect.NavigateSignIn -> navController.navigateSignIn()
-                is SignUpEffect.NavigateHome -> navController.navigate(ApplicationRoute.Home.route)
+                is SignUpEffect.NavigateHome -> navController.navigate(ApplicationRoute.Home.route) {
+                    popUpGraph()
+                }
             }
         }
     }
