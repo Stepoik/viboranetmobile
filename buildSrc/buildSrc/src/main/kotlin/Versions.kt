@@ -70,4 +70,14 @@ object Versions {
     object KSP {
         const val version = "2.1.10-1.0.29"
     }
+
+    object Firebase {
+        const val version = "1.9.0"
+    }
+
+    object Google {
+        object GMS {
+            const val version = "4.4.1"
+        }
+    }
 }

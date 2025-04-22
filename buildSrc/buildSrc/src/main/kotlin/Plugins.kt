@@ -12,4 +12,8 @@ object Plugins {
         const val multiplatform = "org.jetbrains.compose"
         const val compiler = "org.jetbrains.kotlin.plugin.compose"
     }
+
+    object Google {
+        const val gms = "com.google.gms.google-services"
+    }
 }

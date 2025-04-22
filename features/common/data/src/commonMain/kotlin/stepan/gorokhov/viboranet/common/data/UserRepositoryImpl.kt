@@ -1,26 +1,30 @@
 package stepan.gorokhov.viboranet.common.data
 
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import stepan.gorokhov.viboranet.common.api.models.User
 import stepan.gorokhov.viboranet.common.api.repositories.UserRepository
 import stepan.gorokhov.viboranet.database.user.UserDao
 
-class UserRepositoryImpl(
-    private val userDao: UserDao
-) : UserRepository {
+class FirebaseUserRepository : UserRepository {
+    private val auth = Firebase.auth
+
     override val isAuthorized: Flow<Boolean>
-        get() = userDao.getUserFlow().map { true }
+        get() = auth.authStateChanged.map { it != null }
 
     override suspend fun updateUser(): Result<Any?> {
-        return Result.success(Unit)
+        return runCatching {
+            val currentUser = auth.currentUser!!
+            auth.updateCurrentUser(currentUser)
+        }
     }
 
     override suspend fun getUser(): Result<User> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun clearUser(): Result<Any?> {
-        TODO("Not yet implemented")
+        return runCatching {
+            auth.currentUser!!.toDomain()
+        }
     }
 }
