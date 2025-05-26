@@ -15,7 +15,7 @@ class SignUpViewModel(
         return SignUpState()
     }
 
-    override fun sendEvent(event: SignUpEvent) {
+    override fun handleEvent(event: SignUpEvent) {
         viewModelScope.launch {
             when (event) {
                 is SignUpEvent.SetEmail -> setEmail(event.email)

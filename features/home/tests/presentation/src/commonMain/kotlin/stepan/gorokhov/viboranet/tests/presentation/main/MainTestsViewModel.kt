@@ -18,13 +18,14 @@ class MainTestsViewModel(
         return MainTestsState()
     }
 
-    override fun sendEvent(event: MainTestsEvent) {
+    override fun handleEvent(event: MainTestsEvent) {
         viewModelScope.launch {
             when (event) {
                 MainTestsEvent.LoadTests -> loadTests()
                 MainTestsEvent.Refresh -> refreshTests()
                 is MainTestsEvent.TestClicked -> selectTest(event.id)
                 MainTestsEvent.SearchClicked -> navigateSearch()
+                MainTestsEvent.CreateTestClicked -> navigateCreateTest()
             }
         }
     }
@@ -41,14 +42,17 @@ class MainTestsViewModel(
         if (_state.value.loading || _state.value.refreshing) return
 
         _state.update { it.copy(refreshing = true) }
-        updateTests()
+        updateTests(force = true)
         _state.update { it.copy(refreshing = false) }
     }
 
-    private suspend fun updateTests() {
+    private suspend fun updateTests(force: Boolean = false) {
         val result = testRepository.getTestPreviews()
         result.onSuccess { previews ->
-            _state.update { it.copy(tests = previews.map { it.toVO() }.toImmutableList()) }
+            _state.update {
+                val newTests =
+                it.copy(tests = previews.map { it.toVO() }.toImmutableList())
+            }
         }.onFailure {
             _state.update { it.copy(error = ErrorMessage(getString(Res.string.error_loading_tests))) }
         }
@@ -60,5 +64,9 @@ class MainTestsViewModel(
 
     private suspend fun navigateSearch() {
         _effect.emit(MainTestsEffect.NavigateSearch)
+    }
+
+    private suspend fun navigateCreateTest() {
+        _effect.emit(MainTestsEffect.NavigateCreateTest)
     }
 }

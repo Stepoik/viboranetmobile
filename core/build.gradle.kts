@@ -4,7 +4,9 @@ plugins {
 
 kotlin {
     sourceSets {
-
+        commonMain.dependencies {
+            api(Dependencies.Kotlin.datetime)
+        }
     }
 }
 

@@ -56,7 +56,7 @@ fun SignUpScreen(navController: NavController) {
             }
         }
     }
-    SignUpScreen(state = viewModel.state.collectAsState().value, onEvent = eventHandler::sendEvent)
+    SignUpScreen(state = viewModel.state.collectAsState().value, onEvent = eventHandler::handleEvent)
 }
 
 @Composable

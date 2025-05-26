@@ -39,7 +39,7 @@ internal fun OngoingTestScreen(
     eventHandler: EventHandler<OngoingTestEvent>
 ) {
     val onOptionClicked: (String) -> Unit =
-        { eventHandler.sendEvent(OngoingTestEvent.OptionPicked(it)) }
+        { eventHandler.handleEvent(OngoingTestEvent.OptionPicked(it)) }
     BaseScaffold {
         Column(Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
             TestHeader(state, modifier = Modifier.padding(bottom = 20.dp))

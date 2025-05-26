@@ -20,7 +20,7 @@ class TestPreviewViewModel(
 
     override fun getInitialState() = TestPreviewViewModelState()
 
-    override fun sendEvent(event: TestPreviewEvent) {
+    override fun handleEvent(event: TestPreviewEvent) {
         viewModelScope.launch {
             when (event) {
                 TestPreviewEvent.LoadPreview -> loadTestPreview()

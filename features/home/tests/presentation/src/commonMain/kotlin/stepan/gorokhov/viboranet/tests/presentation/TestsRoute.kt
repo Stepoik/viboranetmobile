@@ -26,4 +26,8 @@ internal sealed class TestsRoute(override val route: String, override val navRou
         route = "$BASE_ROUTE/result/{${TestsRoutesArguments.ID}}",
         navRoute = "$BASE_ROUTE/result"
     )
+
+    data object CreateTest : TestsRoute(
+        route = "$BASE_ROUTE/create"
+    )
 }

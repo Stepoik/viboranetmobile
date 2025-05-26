@@ -43,6 +43,17 @@ include(":features:home:tests:domain")
 include(":features:home:tests:data")
 include(":features:home:tests:presentation")
 
+include(":features:home:profile:api")
+include(":features:home:profile:domain")
+include(":features:home:profile:data")
+include(":features:home:profile:presentation")
+
+include(":features:home:chat:api")
+include(":features:home:chat:domain")
+include(":features:home:chat:data")
+include(":features:home:chat:presentation")
+
+
 include(":features:splash")
 
 include(":features:common:api")

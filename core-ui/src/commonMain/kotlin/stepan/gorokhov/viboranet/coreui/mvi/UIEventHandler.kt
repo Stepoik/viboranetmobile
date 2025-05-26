@@ -8,8 +8,8 @@ import androidx.compose.runtime.remember
 class UIEventHandler<Event : UIEvent>(
     private val eventHandler: EventHandler<Event>
 ) : EventHandler<Event> {
-    override fun sendEvent(event: Event) {
-        eventHandler.sendEvent(event)
+    override fun handleEvent(event: Event) {
+        eventHandler.handleEvent(event)
     }
 }
 

@@ -3,9 +3,10 @@ package stepan.gorokhov.viboranet.tests.api.repositories
 import stepan.gorokhov.viboranet.tests.api.models.TestPreview
 import stepan.gorokhov.viboranet.tests.api.models.TournamentResult
 import stepan.gorokhov.viboranet.tests.api.models.TournamentTest
+import stepan.gorokhov.viboranet.tests.api.models.Vote
 
 interface TestRepository {
-    suspend fun getTestPreviews(): Result<List<TestPreview>>
+    suspend fun getTestPreviews(offset: Long): Result<List<TestPreview>>
 
     suspend fun getTestPreview(id: String): Result<TestPreview>
 
@@ -13,4 +14,6 @@ interface TestRepository {
 
     // Возращает id зафиксированного результата
     suspend fun saveTournamentResult(result: TournamentResult): Result<String>
+
+    suspend fun voteForTest(id: String, vote: Vote): Result<Any?>
 }

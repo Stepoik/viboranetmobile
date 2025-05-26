@@ -12,7 +12,7 @@ class SplashViewModel(
 ) : BaseViewModel<SplashState, SplashState, SplashEffect, SplashEvent>() {
     override fun getInitialState() = SplashState
 
-    override fun sendEvent(event: SplashEvent) {
+    override fun handleEvent(event: SplashEvent) {
         viewModelScope.launch {
             when (event) {
                 SplashEvent.CheckUser -> checkUserAuth()

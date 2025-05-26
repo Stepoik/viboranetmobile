@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navigation
 import stepan.gorokhov.viboranet.home.route.HomeRoute
+import stepan.gorokhov.viboranet.tests.presentation.createTest.createTest
 import stepan.gorokhov.viboranet.tests.presentation.main.mainRouting
 import stepan.gorokhov.viboranet.tests.presentation.ongoingTest.ongoingTest
 import stepan.gorokhov.viboranet.tests.presentation.testResult.testResult
@@ -15,5 +16,6 @@ fun NavGraphBuilder.tests(navController: NavController) {
         testPreview(navController)
         ongoingTest(navController)
         testResult(navController)
+        createTest(navController)
     }
 }

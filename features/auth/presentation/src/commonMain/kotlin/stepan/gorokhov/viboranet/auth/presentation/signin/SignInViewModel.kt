@@ -11,7 +11,7 @@ import stepan.gorokhov.viboranet.coreui.validation.getErrorOrNull
 class SignInViewModel(
     private val signInUseCase: SignInUseCase
 ) : BaseViewModel<SignInState, SignInState, SignInEffect, SignInEvent>() {
-    override fun sendEvent(event: SignInEvent) {
+    override fun handleEvent(event: SignInEvent) {
         viewModelScope.launch {
             when (event) {
                 is SignInEvent.SetEmail -> setEmail(event.email)

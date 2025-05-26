@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import stepan.gorokhov.viboranet.uikit.ViboraNetTheme
 
 @Composable
-fun BaseScaffold(content: @Composable () -> Unit) {
-    Scaffold {
+fun BaseScaffold(floatingActionButton: @Composable () -> Unit = {}, content: @Composable () -> Unit) {
+    Scaffold(floatingActionButton = floatingActionButton) {
         Column(Modifier.background(MaterialTheme.colorScheme.background).systemBarsPadding()) {
             content()
         }

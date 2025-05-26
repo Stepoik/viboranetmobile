@@ -15,7 +15,7 @@ internal fun OngoingTestScreen(navController: NavController) {
     val viewModel = koinViewModel<OngoingTestViewModel>()
     val eventHandler = rememberUIEventHandler(viewModel)
     LaunchedEffect(Unit) {
-        viewModel.sendEvent(OngoingTestEvent.StartTest)
+        viewModel.handleEvent(OngoingTestEvent.StartTest)
 
         viewModel.effect.collect { effect ->
             when (effect) {

@@ -53,7 +53,7 @@ fun SignInScreen(navController: NavController) {
     val eventHandler = rememberUIEventHandler(viewModel)
     SignInScreen(
         state = viewModel.state.collectAsStateWithLifecycle().value,
-        onEvent = eventHandler::sendEvent
+        onEvent = eventHandler::handleEvent
     )
 }
 

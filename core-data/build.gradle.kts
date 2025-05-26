@@ -13,6 +13,8 @@ kotlin {
             api(Dependencies.Ktor.contentNegotiation)
 
             api(Dependencies.Datastore.core)
+
+            api(projects.core)
         }
         iosMain.dependencies {
             implementation(Dependencies.Ktor.clientDarwin)

@@ -5,5 +5,6 @@ data class TestPreview(
     val title: String,
     val description: String,
     val image: String,
-    val author: TestAuthor
+    val author: TestAuthor,
+    val rating: Long
 )

@@ -39,9 +39,11 @@ sealed class MainTestsEvent : UIEvent {
     data object Refresh : MainTestsEvent()
     data class TestClicked(val id: String) : MainTestsEvent()
     data object SearchClicked : MainTestsEvent()
+    data object CreateTestClicked : MainTestsEvent()
 }
 
 sealed class MainTestsEffect : UIEffect {
     data class NavigateTest(val id: String) : MainTestsEffect()
     data object NavigateSearch : MainTestsEffect()
+    data object NavigateCreateTest : MainTestsEffect()
 }

@@ -14,7 +14,7 @@ import stepan.gorokhov.viboranet.coreui.routing.popUpGraph
 fun SplashScreen(navController: NavController) {
     val viewModel = koinViewModel<SplashViewModel>()
     LaunchedEffect(Unit) {
-        viewModel.sendEvent(SplashEvent.CheckUser)
+        viewModel.handleEvent(SplashEvent.CheckUser)
         viewModel.effect.collect { effect ->
             when (effect) {
                 is SplashEffect.NavigateAuth -> {

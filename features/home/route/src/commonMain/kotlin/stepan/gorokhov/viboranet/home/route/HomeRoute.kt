@@ -1,11 +1,15 @@
 package stepan.gorokhov.viboranet.home.route
 
-import stepan.gorokhov.viboranet.common.presentation.ApplicationRoute
 import stepan.gorokhov.viboranet.coreui.routing.BaseRoute
 
-private val BASE_ROUTE = ApplicationRoute.Home.route
-
-sealed class HomeRoute(override val route: String) : BaseRoute {
-    data object Tests : HomeRoute("$BASE_ROUTE/tests")
-    data object Profile : HomeRoute("$BASE_ROUTE/profile")
+sealed class HomeRoute : BaseRoute {
+    data object Tests : HomeRoute() {
+        override val route: String = "tests"
+    }
+    data object Chat : HomeRoute() {
+        override val route: String = "chat"
+    }
+    data object Profile : HomeRoute() {
+        override val route: String = "profile"
+    }
 }

@@ -31,7 +31,7 @@ internal class OngoingTestViewModel(
         }
     }
 
-    override fun sendEvent(event: OngoingTestEvent) {
+    override fun handleEvent(event: OngoingTestEvent) {
         viewModelScope.launch {
             when (event) {
                 is OngoingTestEvent.StartTest -> startTest()

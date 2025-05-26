@@ -14,7 +14,7 @@ import stepan.gorokhov.viboranet.core.flow.mapState
 
 @Stable
 fun interface EventHandler<Event : UIEvent> {
-    fun sendEvent(event: Event)
+    fun handleEvent(event: Event)
 }
 
 abstract class BaseViewModel<ViewState : UIState, State : ViewModelState<ViewState>, Effect : UIEffect, Event : UIEvent> :
