@@ -6,7 +6,13 @@ import stepan.gorokhov.viboranet.coreui.mvi.ViewModelState
 data class MessageVO(
     val id: String,
     val text: String,
-    val isFromMe: Boolean
+    val isFromMe: Boolean,
+    val time: String,
+    val author: AuthorVO
+)
+
+data class AuthorVO(
+    val username: String
 )
 
 data class ChatState(

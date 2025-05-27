@@ -30,4 +30,8 @@ internal sealed class TestsRoute(override val route: String, override val navRou
     data object CreateTest : TestsRoute(
         route = "$BASE_ROUTE/create"
     )
+
+    data object Search : TestsRoute(
+        route = "$BASE_ROUTE/search"
+    )
 }

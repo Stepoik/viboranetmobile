@@ -2,14 +2,9 @@ package stepan.gorokhov.viboranet.coreui.mvi
 
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import stepan.gorokhov.viboranet.core.flow.mapState
 
 @Stable
@@ -24,7 +19,7 @@ abstract class BaseViewModel<ViewState : UIState, State : ViewModelState<ViewSta
     protected val _state = MutableStateFlow(getInitialState())
     val state = _state.mapState { it.toScreenState() } // UI Thread mapping
 
-    protected val _effect = MutableSharedFlow<Effect>()
+    protected val _effect = MutableSharedFlow<Effect>(extraBufferCapacity = 1)
     val effect: SharedFlow<Effect> = _effect
 
     protected abstract fun getInitialState(): State

@@ -5,6 +5,7 @@ import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import stepan.gorokhov.viboranet.common.api.models.NewUserData
 import stepan.gorokhov.viboranet.common.api.models.User
 import stepan.gorokhov.viboranet.common.api.repositories.UserRepository
 import stepan.gorokhov.viboranet.database.user.UserDao
@@ -15,7 +16,7 @@ class FirebaseUserRepository : UserRepository {
     override val isAuthorized: Flow<Boolean>
         get() = auth.authStateChanged.map { it != null }
 
-    override suspend fun updateUser(): Result<Any?> {
+    override suspend fun refreshUser(): Result<Any?> {
         return runCatching {
             val currentUser = auth.currentUser!!
             auth.updateCurrentUser(currentUser)
@@ -24,6 +25,13 @@ class FirebaseUserRepository : UserRepository {
 
     override suspend fun getUser(): Result<User> {
         return runCatching {
+            auth.currentUser!!.toDomain()
+        }
+    }
+
+    override suspend fun updateUser(user: NewUserData): Result<User> {
+        return runCatching {
+            auth.currentUser!!.updateProfile(displayName = user.username, photoUrl = user.imageUrl)
             auth.currentUser!!.toDomain()
         }
     }

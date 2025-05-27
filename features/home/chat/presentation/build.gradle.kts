@@ -10,7 +10,7 @@ kotlin {
             implementation(projects.features.home.route)
             implementation(projects.features.home.chat.api)
             implementation(projects.features.home.chat.data)
-            implementation(projects.features.home.profile.api)
+            implementation(projects.features.common.api)
         }
     }
 }

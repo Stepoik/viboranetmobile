@@ -7,8 +7,11 @@ fun TestPreview.toVO() = TestPreviewVO(
     title = title,
     description = description,
     image = image,
+    rating = globalRating,
+    localRating = localRating,
     author = TestAuthorVO(
         id = author.id,
-        name = author.name
+        name = author.name,
+        image = author.image
     )
 )

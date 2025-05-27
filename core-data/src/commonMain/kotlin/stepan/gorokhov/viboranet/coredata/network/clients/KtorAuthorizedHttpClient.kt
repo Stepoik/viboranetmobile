@@ -12,18 +12,16 @@ import kotlinx.coroutines.sync.withLock
 import stepan.gorokhov.viboranet.coredata.network.BearerTokens
 import stepan.gorokhov.viboranet.coredata.network.HttpEngineFactory
 import stepan.gorokhov.viboranet.coredata.network.TokenHolder
-import stepan.gorokhov.viboranet.coredata.network.TokenRefresher
 
-fun createAuthorizedHttpClient(tokenHolder: TokenHolder, refresher: TokenRefresher): HttpClient {
+fun createAuthorizedHttpClient(tokenHolder: TokenHolder): HttpClient {
     return HttpClient(HttpEngineFactory().createEngine()) {
         commonConfig()
     }.apply {
-        enableAuthInterceptor(tokenHolder = tokenHolder, refresher = refresher)
+        enableAuthInterceptor(tokenHolder = tokenHolder)
     }
 }
 
-private fun HttpClient.enableAuthInterceptor(tokenHolder: TokenHolder, refresher: TokenRefresher) {
-    val mutex = Mutex()
+private fun HttpClient.enableAuthInterceptor(tokenHolder: TokenHolder) {
     plugin(HttpSend).intercept { request ->
         val tokens = tokenHolder.getTokens()
         val accessToken = tokens?.access
@@ -32,36 +30,6 @@ private fun HttpClient.enableAuthInterceptor(tokenHolder: TokenHolder, refresher
         request.headers {
             append(HttpHeaders.Authorization, "${AuthScheme.Bearer} $accessToken")
         }
-        val firstCall = execute(request)
-        if (firstCall.response.status == HttpStatusCode.Forbidden) {
-            val newAccessToken = updateAndGetNewTokens(
-                tokenHolder = tokenHolder,
-                refresher = refresher,
-                initialTokens = tokens,
-                mutex = mutex
-            ).access
-
-            request.headers {
-                set(HttpHeaders.Authorization, "${AuthScheme.Bearer} $newAccessToken")
-            }
-            return@intercept execute(request)
-        }
-        firstCall
+        execute(request)
     }
-}
-
-private suspend fun updateAndGetNewTokens(
-    tokenHolder: TokenHolder,
-    refresher: TokenRefresher,
-    initialTokens: BearerTokens,
-    mutex: Mutex
-): BearerTokens = mutex.withLock {
-    val currentToken = tokenHolder.getTokens()
-    val newTokens = if (currentToken == initialTokens) {
-        refresher.refreshTokens(initialTokens.refresh)
-    } else {
-        currentToken
-    }
-    tokenHolder.setTokens(newTokens)
-    newTokens!!
 }

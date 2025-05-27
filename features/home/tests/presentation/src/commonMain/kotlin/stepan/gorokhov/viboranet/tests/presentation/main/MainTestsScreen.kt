@@ -1,5 +1,7 @@
 package stepan.gorokhov.viboranet.tests.presentation.main
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,10 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,6 +28,7 @@ import stepan.gorokhov.viboranet.coreui.mvi.rememberUIEventHandler
 import stepan.gorokhov.viboranet.tests.presentation.TestsRoute
 import stepan.gorokhov.viboranet.tests.presentation.main.components.SearchButton
 import stepan.gorokhov.viboranet.tests.presentation.main.components.tests
+import stepan.gorokhov.viboranet.tests.presentation.testpreview.navigateTestPreview
 import stepan.gorokhov.viboranet.tests.presentation.ongoingTest.navigateOngoingTest
 import stepan.gorokhov.viboranet.uikit.components.BaseScaffold
 import stepan.gorokhov.viboranet.uikit.components.verticalSpacer
@@ -42,32 +47,27 @@ fun MainTestsScreen(navController: NavController) {
                     navController.navigateOngoingTest(effect.id)
                 }
 
-                is MainTestsEffect.NavigateSearch -> {
-
+                is MainTestsEffect.NavigateTestPreview -> {
+                    navController.navigateTestPreview(effect.id)
                 }
 
-                is MainTestsEffect.NavigateCreateTest -> navController.navigate(TestsRoute.CreateTest.route)
+                is MainTestsEffect.NavigateSearch -> {
+                    navController.navigate(TestsRoute.Search.route)
+                }
+
+                is MainTestsEffect.NavigateCreateTest -> {
+                    navController.navigate(TestsRoute.CreateTest.route)
+                }
             }
         }
     }
-
+    val eventHandler = rememberUIEventHandler(viewModel)
     val state = viewModel.state.collectAsState().value
-    when {
-        state.loading -> {
-            MainTestsLoadingSkeleton()
-        }
 
-        state.error != null -> {
-            MainTestsErrorScreen()
-        }
-
-        else -> {
-            val eventHandler = rememberUIEventHandler(viewModel)
-            MainTestsScreen(state = state, eventHandler = eventHandler)
-        }
-    }
+    MainTestsScreen(state = state, eventHandler = eventHandler)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MainTestsScreen(
     state: MainTestsState,
@@ -85,27 +85,46 @@ internal fun MainTestsScreen(
             }
         }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+        PullToRefreshBox(
+            isRefreshing = state.refreshing,
+            onRefresh = { eventHandler.handleEvent(MainTestsEvent.Refresh) }
         ) {
-            Text(
-                stringResource(Res.string.tests),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            SearchButton(
-                onClick = { eventHandler.handleEvent(MainTestsEvent.SearchClicked) },
-                modifier = Modifier.fillMaxWidth()
-            )
-            LazyColumn(Modifier.fillMaxSize().weight(1f)) {
-                verticalSpacer(16.dp)
-                tests(
-                    state.tests,
-                    onTestClicked = { eventHandler.handleEvent(MainTestsEvent.TestClicked(it)) })
+            TestList(state, eventHandler)
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun TestList(state: MainTestsState, eventHandler: EventHandler<MainTestsEvent>) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        LazyColumn(Modifier.fillMaxSize()) {
+            stickyHeader {
+                Column(
+                    Modifier.background(MaterialTheme.colorScheme.background)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(
+                        stringResource(Res.string.tests),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                    SearchButton(
+                        onClick = { eventHandler.handleEvent(MainTestsEvent.SearchClicked) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
+            verticalSpacer(16.dp)
+            tests(
+                state.tests,
+                onTestClicked = { eventHandler.handleEvent(MainTestsEvent.TestClicked(it)) },
+                onStartClicked = { eventHandler.handleEvent(MainTestsEvent.StartTestClicked(it)) }
+            )
         }
     }
 }

@@ -15,8 +15,10 @@ data class TestDto(
     val imageId: String,
     @SerialName("tags")
     val tags: List<String>,
-    @SerialName("rating")
-    val rating: Long,
+    @SerialName("global_rating")
+    val globalRating: Long,
+    @SerialName("local_rating")
+    val localRating: Long,
     @SerialName("options")
     val options: List<TestOptionDto>,
     @SerialName("author")
@@ -43,6 +45,6 @@ data class TestAuthorDto(
     val userId: String,
     @SerialName("username")
     val username: String,
-    @SerialName("image_id")
-    val imageId: String
+    @SerialName("image_url")
+    val imageUrl: String
 )

@@ -16,6 +16,8 @@ kotlin {
             implementation(projects.features.home.tests.domain)
             implementation(projects.features.home.tests.data)
 
+            implementation(projects.features.common.api)
+
             implementation(Dependencies.Coil.compose)
             implementation(Dependencies.Coil.ktor)
         }

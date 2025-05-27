@@ -20,14 +20,14 @@ sealed class OngoingTestState : UIState {
 }
 
 data class TestOptionVO(
-    val id: String,
+    val index: Int,
     val image: String,
     val title: String
 )
 
 sealed class OngoingTestEvent : UIEvent {
     data object StartTest : OngoingTestEvent()
-    data class OptionPicked(val id: String) : OngoingTestEvent()
+    data class OptionPicked(val index: Int) : OngoingTestEvent()
 }
 
 sealed class OngoingTestEffect : UIEffect {

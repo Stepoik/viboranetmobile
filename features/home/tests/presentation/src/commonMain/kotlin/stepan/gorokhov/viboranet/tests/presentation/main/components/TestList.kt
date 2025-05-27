@@ -1,47 +1,48 @@
 package stepan.gorokhov.viboranet.tests.presentation.main.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import stepan.gorokhov.viboranet.coreui.coil.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
-import org.jetbrains.compose.resources.stringResource
 import stepan.gorokhov.viboranet.tests.presentation.main.TestPreviewVO
 import stepan.gorokhov.viboranet.uikit.components.BaseButton
-import viboranet.features.home.tests.presentation.generated.resources.Res
-import viboranet.features.home.tests.presentation.generated.resources.author
-import viboranet.features.home.tests.presentation.generated.resources.start
 
 internal fun LazyListScope.tests(
     tests: ImmutableList<TestPreviewVO>,
     onTestClicked: (String) -> Unit,
+    onStartClicked: (String) -> Unit
 ) {
     items(tests) { test ->
         TestPreviewItem(
-            test,
+            test = test,
             onTestClicked = { onTestClicked(test.id) },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            onStartClicked = { onStartClicked(test.id) },
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp).padding(horizontal = 16.dp)
         )
     }
 }
@@ -50,6 +51,7 @@ internal fun LazyListScope.tests(
 internal fun TestPreviewItem(
     test: TestPreviewVO,
     onTestClicked: () -> Unit,
+    onStartClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -57,49 +59,118 @@ internal fun TestPreviewItem(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
     ) {
-        Row(Modifier.height(IntrinsicSize.Max).padding(12.dp)) {
-            Column(
-                Modifier.fillMaxSize().weight(1f),
-                verticalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // Изображение теста
+            AsyncImage(
+                model = test.image,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+
+            // Заголовок
+            Text(
+                text = test.title,
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            // Описание
+            Text(
+                text = test.description,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            // Информация об авторе и рейтинги
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(
-                        test.title,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodySmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    AsyncImage(
+                        model = test.author.image,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
                     )
                     Text(
-                        test.description,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        style = MaterialTheme.typography.labelMedium,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        text = test.author.name,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                Spacer(Modifier.padding(top = 6.dp))
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Локальный рейтинг
+                    when {
+                        test.localRating > 0 -> {
+                            Icon(
+                                imageVector = Icons.Default.ThumbUp,
+                                contentDescription = "Позитивная оценка",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        test.localRating < 0 -> {
+                            Icon(
+                                imageVector = Icons.Default.ThumbUp,
+                                contentDescription = "Негативная оценка",
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(20.dp).rotate(180f)
+                            )
+                        }
+                        else -> {
+                            Icon(
+                                imageVector = Icons.Outlined.ThumbUp,
+                                contentDescription = "Нейтральная оценка",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                    
+                    // Общий рейтинг
                     Text(
-                        stringResource(Res.string.author, test.author.name),
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        style = MaterialTheme.typography.labelMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        text = "★ ${test.rating}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary
                     )
-                    BaseButton(stringResource(Res.string.start), onClick = onTestClicked)
                 }
             }
-            AsyncImage(
-                test.image,
-                contentDescription = test.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .height(132.dp)
-                    .width(112.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(MaterialTheme.colorScheme.onTertiaryContainer)
-            )
+
+            // Кнопки
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                BaseButton(
+                    onClick = onTestClicked,
+                    modifier = Modifier.weight(1f),
+                    text = "Подробнее"
+                )
+                BaseButton(
+                    onClick = onStartClicked,
+                    modifier = Modifier.weight(1f),
+                    text = "Начать"
+                )
+            }
         }
     }
 }

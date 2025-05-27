@@ -2,7 +2,10 @@ package stepan.gorokhov.viboranet.coredata.network.clients
 
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.HttpClientEngineConfig
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.websocket.WebSockets
@@ -30,6 +33,22 @@ fun <T : HttpClientEngineConfig> HttpClientConfig<T>.commonConfig() {
 
     defaultRequest {
         contentType(ContentType.Application.Json)
+    }
+
+    HttpResponseValidator {
+        validateResponse { response ->
+            val statusCode = response.status
+            if (statusCode.value in 400..499) {
+                throw ClientRequestException(response, "Client error ${statusCode.value}")
+            }
+            if (statusCode.value >= 500) {
+                throw ServerResponseException(response, "Server error ${statusCode.value}")
+            }
+        }
+
+        handleResponseExceptionWithRequest { exception, _ ->
+
+        }
     }
 
     install(HttpTimeout) {

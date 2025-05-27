@@ -9,6 +9,8 @@ kotlin {
             api(projects.features.common.api)
             api(projects.database)
             implementation(projects.features.common.data)
+
+            implementation(Dependencies.Firebase.auth)
         }
     }
 }

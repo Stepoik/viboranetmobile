@@ -7,6 +7,8 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import stepan.gorokhov.viboranet.coredata.network.NetworkConstants.BASE_URL
+import stepan.gorokhov.viboranet.tests.data.preview.network.models.CreateTestRequest
+import stepan.gorokhov.viboranet.tests.data.preview.network.models.CreateTestResponse
 import stepan.gorokhov.viboranet.tests.data.preview.network.models.SaveTestResultRequest
 import stepan.gorokhov.viboranet.tests.data.preview.network.models.TestDto
 import stepan.gorokhov.viboranet.tests.data.preview.network.models.VoteForTestRequest
@@ -28,12 +30,14 @@ class TestApi(
     }
 
     suspend fun voteForTest(id: String, request: VoteForTestRequest) {
-        httpClient.post("$BASE_TEST_URL/tests/$id/votes") {
+        httpClient.post("$BASE_TEST_URL/$id/votes") {
             setBody(request)
         }
     }
 
-    suspend fun saveTestResult(id: String, request: SaveTestResultRequest) {
-        httpClient.post("")
+    suspend fun createTest(request: CreateTestRequest): CreateTestResponse {
+        return httpClient.post(BASE_TEST_URL) {
+            setBody(request)
+        }.body()
     }
 }

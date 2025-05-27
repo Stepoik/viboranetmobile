@@ -13,6 +13,6 @@ data class SaveTestResultRequest(
 @Serializable
 data class TestResultOptionDto(
     val index: Int,
-    @SerialName()
+    @SerialName("local_score")
     val localScore: Int
 )

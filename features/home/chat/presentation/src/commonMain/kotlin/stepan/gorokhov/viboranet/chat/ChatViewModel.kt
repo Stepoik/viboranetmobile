@@ -1,30 +1,22 @@
 package stepan.gorokhov.viboranet.chat
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlin.collections.plus as kPlus
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import stepan.gorokhov.viboranet.chat.api.ChatConnection
 import stepan.gorokhov.viboranet.chat.api.ChatRepository
+import stepan.gorokhov.viboranet.common.api.repositories.UserRepository
 import stepan.gorokhov.viboranet.core.list.plus
 import stepan.gorokhov.viboranet.coreui.mvi.BaseViewModel
-import stepan.gorokhov.viboranet.profile.api.ProfileRepository
 
 class ChatViewModel(
     private val chatRepository: ChatRepository,
     private val chatConnection: ChatConnection,
-    private val profileRepository: ProfileRepository
+    private val userRepository: UserRepository
 ) : BaseViewModel<ChatState, ChatViewModelState, ChatEffect, ChatEvent>() {
-    init {
-        viewModelScope.launch {
-            val user = profileRepository.getCurrentUser().getOrElse { return@launch }
-            chatConnection.subscribe().collect { message ->
-                _state.update {
-                    it.copy(messages = message.toVO(user.id) + it.messages)
-                }
-            }
-        }
-    }
+    private var connectionJob: Job? = null
 
     override fun getInitialState(): ChatViewModelState = ChatViewModelState()
 
@@ -38,8 +30,29 @@ class ChatViewModel(
                 }
 
                 is ChatEvent.SendMessage -> sendMessage()
+
+                is ChatEvent.ConnectChat -> connectToChat()
+
+                is ChatEvent.DisconnectChat -> disconnectChat()
             }
         }
+    }
+
+    private fun connectToChat() {
+        connectionJob?.cancel()
+        connectionJob = viewModelScope.launch {
+            val user = userRepository.getUser().getOrElse { return@launch }
+            chatConnection.subscribe().collect { message ->
+                println(message)
+                _state.update {
+                    it.copy(messages = message.toVO(user.id) + it.messages)
+                }
+            }
+        }
+    }
+
+    private fun disconnectChat() {
+        connectionJob?.cancel()
     }
 
     private suspend fun loadMessages() {
@@ -48,7 +61,7 @@ class ChatViewModel(
 
         _state.update { it.copy(isLoading = true) }
         chatRepository.getMessages(offset = state.messages.size.toLong()).onSuccess { messages ->
-            val user = profileRepository.getCurrentUser().getOrNull() ?: return@onSuccess
+            val user = userRepository.getUser().getOrNull() ?: return@onSuccess
             val messagesVo = messages.map { it.toVO(user.id) }
             _state.update { it.copy(messages = it.messages.kPlus(messagesVo)) }
         }
@@ -61,5 +74,6 @@ class ChatViewModel(
         if (currentText.isNotBlank()) {
             chatConnection.sendMessage(currentText)
         }
+        _state.update { it.copy(inputText = "") }
     }
 } 

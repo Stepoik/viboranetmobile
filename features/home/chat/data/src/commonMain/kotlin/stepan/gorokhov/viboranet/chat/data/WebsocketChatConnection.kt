@@ -6,6 +6,7 @@ import io.ktor.websocket.Frame
 import io.ktor.websocket.WebSocketSession
 import io.ktor.websocket.readText
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
@@ -17,6 +18,7 @@ import stepan.gorokhov.viboranet.chat.api.ChatConnection
 import stepan.gorokhov.viboranet.chat.api.models.Message
 import stepan.gorokhov.viboranet.chat.data.network.models.MessageDto
 import stepan.gorokhov.viboranet.chat.data.network.models.NewMessage
+import stepan.gorokhov.viboranet.chat.data.network.models.WebsocketMessage
 import stepan.gorokhov.viboranet.chat.data.network.models.toMessage
 import stepan.gorokhov.viboranet.coredata.network.NetworkConstants
 
@@ -33,15 +35,16 @@ class WebsocketChatConnection(
                     mutex.withLock {
                         val currentSession = session
                         if (currentSession == null || !currentSession.isActive) {
-                            session = httpClient.webSocketSession("${NetworkConstants.BASE_URL}/ws")
+                            session = httpClient.webSocketSession("ws://${NetworkConstants.BASE_DOMAIN}/ws")
                         }
                     }
                     session?.let { session ->
                         for (frame in session.incoming) {
+                            println(frame)
                             when (frame) {
                                 is Frame.Text -> {
                                     val message =
-                                        Json.decodeFromString<MessageDto>(frame.readText())
+                                        Json.decodeFromString<WebsocketMessage>(frame.readText())
                                     emit(message.toMessage())
                                 }
 
@@ -49,6 +52,9 @@ class WebsocketChatConnection(
                             }
                         }
                     }
+                }
+                runCatching {
+                    delay(RECONNECTION_DELAY)
                 }
             }
         }
@@ -59,5 +65,9 @@ class WebsocketChatConnection(
             val data = Json.encodeToString(NewMessage(text))
             session!!.send(Frame.Text(data))
         }
+    }
+
+    companion object {
+        private const val RECONNECTION_DELAY = 1000L
     }
 }

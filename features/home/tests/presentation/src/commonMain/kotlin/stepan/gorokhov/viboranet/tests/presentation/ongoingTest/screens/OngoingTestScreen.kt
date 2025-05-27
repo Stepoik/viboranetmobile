@@ -38,7 +38,7 @@ internal fun OngoingTestScreen(
     state: OngoingTestState.Started,
     eventHandler: EventHandler<OngoingTestEvent>
 ) {
-    val onOptionClicked: (String) -> Unit =
+    val onOptionClicked: (Int) -> Unit =
         { eventHandler.handleEvent(OngoingTestEvent.OptionPicked(it)) }
     BaseScaffold {
         Column(Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
@@ -75,7 +75,7 @@ private fun TestHeader(state: OngoingTestState.Started, modifier: Modifier = Mod
 @Composable
 private fun TestOption(
     testOption: TestOptionVO,
-    onClick: (String) -> Unit,
+    onClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.height(IntrinsicSize.Max)) {
@@ -86,7 +86,7 @@ private fun TestOption(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(16.dp))
-                .clickable { onClick(testOption.id) }
+                .clickable { onClick(testOption.index) }
                 .background(Color.Gray)
                 .alpha(0.5f)
         )

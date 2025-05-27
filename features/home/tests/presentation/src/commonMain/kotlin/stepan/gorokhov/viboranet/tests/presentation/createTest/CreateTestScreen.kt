@@ -3,21 +3,32 @@ package stepan.gorokhov.viboranet.tests.presentation.createTest
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import kotlinx.coroutines.flow.collect
 import org.koin.compose.viewmodel.koinViewModel
+import stepan.gorokhov.viboranet.coreui.coil.AsyncImage
+import stepan.gorokhov.viboranet.coreui.launchers.rememberImageCaptureLauncher
+import stepan.gorokhov.viboranet.coreui.models.StableImage
 import stepan.gorokhov.viboranet.coreui.mvi.EventHandler
 import stepan.gorokhov.viboranet.coreui.mvi.rememberUIEventHandler
 import stepan.gorokhov.viboranet.uikit.components.BaseScaffold
 import stepan.gorokhov.viboranet.uikit.components.VerticalSpacer
 import stepan.gorokhov.viboranet.uikit.components.verticalSpacer
+import kotlin.random.Random
 
 @Composable
 fun CreateTestScreen(navController: NavController) {
@@ -25,13 +36,24 @@ fun CreateTestScreen(navController: NavController) {
     val state = viewModel.state.collectAsState().value
     val eventHandler = rememberUIEventHandler(viewModel)
 
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect {
+            when (it) {
+                is CreateTestEffect.NavigateBack -> navController.navigateUp()
+                else -> {}
+            }
+        }
+    }
+
     when {
         state.loading -> {
             CircularProgressIndicator()
         }
+
         state.error != null -> {
             Text(text = state.error)
         }
+
         else -> {
             CreateTestContent(state = state, eventHandler = eventHandler)
         }
@@ -43,16 +65,18 @@ private fun CreateTestContent(
     state: CreateTestState,
     eventHandler: EventHandler<CreateTestEvent>
 ) {
+    val saveableStateHolder = rememberSaveableStateHolder()
     BaseScaffold {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
         ) {
             item {
                 OutlinedTextField(
                     value = state.title,
                     onValueChange = { eventHandler.handleEvent(CreateTestEvent.UpdateTitle(it)) },
+                    singleLine = true,
                     label = { Text("Название теста") },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -79,7 +103,7 @@ private fun CreateTestContent(
             }
             verticalSpacer(16.dp)
 
-            item {
+            item(key = "image_section") {
                 ImageUploadSection(
                     currentImage = state.testImage,
                     onImageSelected = { eventHandler.handleEvent(CreateTestEvent.UpdateTestImage(it)) }
@@ -87,18 +111,40 @@ private fun CreateTestContent(
             }
             verticalSpacer(16.dp)
 
-            items(state.answerOptions) { answerOption ->
+            items(
+                state.answerOptions,
+                key = { item -> item.id }) { answerOption ->
                 AnswerOptionItem(
                     answerOption = answerOption,
-                    onUpdate = { eventHandler.handleEvent(CreateTestEvent.UpdateAnswerOption(state.answerOptions.indexOf(answerOption), it)) },
-                    onDelete = { eventHandler.handleEvent(CreateTestEvent.RemoveAnswerOption(state.answerOptions.indexOf(answerOption))) }
+                    onUpdate = {
+                        eventHandler.handleEvent(
+                            CreateTestEvent.UpdateAnswerOption(it)
+                        )
+                    },
+                    onLoadImage = {
+                        eventHandler.handleEvent(
+                            CreateTestEvent.UpdateAnswerOptionImage(
+                                id = answerOption.id,
+                                image = it
+                            )
+                        )
+                    },
+                    onDelete = {
+                        eventHandler.handleEvent(
+                            CreateTestEvent.RemoveAnswerOption(answerOption.id)
+                        )
+                    }
                 )
                 VerticalSpacer(8.dp)
             }
 
             item {
                 Button(
-                    onClick = { eventHandler.handleEvent(CreateTestEvent.AddAnswerOption(AnswerOption("", "", null))) },
+                    onClick = {
+                        eventHandler.handleEvent(
+                            CreateTestEvent.AddAnswerOption(AnswerOption())
+                        )
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null)
@@ -132,7 +178,7 @@ private fun TagsSection(
     Column {
         Text("Теги", style = MaterialTheme.typography.titleMedium)
         VerticalSpacer(8.dp)
-        
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -141,10 +187,11 @@ private fun TagsSection(
                 value = newTag,
                 onValueChange = { newTag = it },
                 modifier = Modifier.weight(1f),
+                singleLine = true,
                 label = { Text("Новый тег") }
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = { 
+            Button(onClick = {
                 if (newTag.isNotBlank()) {
                     onAddTag(newTag)
                     newTag = ""
@@ -153,9 +200,9 @@ private fun TagsSection(
                 Text("Добавить")
             }
         }
-        
+
         VerticalSpacer(8.dp)
-        
+
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -179,23 +226,20 @@ private fun TagsSection(
 @Composable
 private fun ImageUploadSection(
     currentImage: String?,
-    onImageSelected: (String) -> Unit
+    onImageSelected: (StableImage) -> Unit
 ) {
+    val launcher = rememberImageCaptureLauncher(onSuccess = {
+        onImageSelected(it)
+    }, onCancel = {})
     Column {
         Text("Изображение теста", style = MaterialTheme.typography.titleMedium)
         VerticalSpacer(8.dp)
-        
-        if (currentImage != null) {
-            // Здесь должна быть загрузка и отображение изображения
-            Text("Изображение загружено")
-        }
-        
-        Button(
-            onClick = { /* Здесь должна быть логика выбора изображения */ },
+
+        LoadImageButton(
+            currentImage,
+            onLoadImage = launcher::launch,
             modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Выбрать изображение")
-        }
+        )
     }
 }
 
@@ -203,8 +247,12 @@ private fun ImageUploadSection(
 private fun AnswerOptionItem(
     answerOption: AnswerOption,
     onUpdate: (AnswerOption) -> Unit,
+    onLoadImage: (StableImage) -> Unit,
     onDelete: () -> Unit
 ) {
+    val pickImageLauncher = rememberImageCaptureLauncher(onSuccess = {
+        onLoadImage(it)
+    }, onCancel = {})
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -221,18 +269,18 @@ private fun AnswerOptionItem(
                     Icon(Icons.Default.Delete, contentDescription = "Удалить вариант")
                 }
             }
-            
+
             VerticalSpacer(8.dp)
-            
+
             OutlinedTextField(
                 value = answerOption.title,
                 onValueChange = { onUpdate(answerOption.copy(title = it)) },
                 label = { Text("Заголовок") },
                 modifier = Modifier.fillMaxWidth()
             )
-            
+
             VerticalSpacer(8.dp)
-            
+
             OutlinedTextField(
                 value = answerOption.description,
                 onValueChange = { onUpdate(answerOption.copy(description = it)) },
@@ -240,20 +288,37 @@ private fun AnswerOptionItem(
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2
             )
-            
+
             VerticalSpacer(8.dp)
-            
-            if (answerOption.image != null) {
-                // Здесь должна быть загрузка и отображение изображения
-                Text("Изображение загружено")
-            }
-            
-            Button(
-                onClick = { /* Здесь должна быть логика выбора изображения */ },
+
+            LoadImageButton(
+                answerOption.imageUrl,
+                onLoadImage = pickImageLauncher::launch,
                 modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Выбрать изображение")
-            }
+            )
         }
     }
-} 
+}
+
+@Composable
+private fun LoadImageButton(
+    image: String?,
+    onLoadImage: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+        onClick = onLoadImage,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        modifier = modifier.aspectRatio(16f / 9f)
+    ) {
+        if (image == null) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(30.dp))
+            }
+        } else {
+            AsyncImage(image, contentDescription = null, modifier = Modifier.fillMaxSize())
+        }
+    }
+}

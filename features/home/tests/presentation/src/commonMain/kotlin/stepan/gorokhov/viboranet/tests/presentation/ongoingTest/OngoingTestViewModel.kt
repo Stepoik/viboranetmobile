@@ -35,7 +35,7 @@ internal class OngoingTestViewModel(
         viewModelScope.launch {
             when (event) {
                 is OngoingTestEvent.StartTest -> startTest()
-                is OngoingTestEvent.OptionPicked -> pickOption(event.id)
+                is OngoingTestEvent.OptionPicked -> pickOption(event.index)
             }
         }
     }
@@ -50,8 +50,8 @@ internal class OngoingTestViewModel(
         }
     }
 
-    private suspend fun pickOption(id: String) {
-        ongoingTestInteractor.pickOption(id)
+    private suspend fun pickOption(index: Int) {
+        ongoingTestInteractor.pickOption(index)
     }
 
     private suspend fun navigateResult(resultId: String) {

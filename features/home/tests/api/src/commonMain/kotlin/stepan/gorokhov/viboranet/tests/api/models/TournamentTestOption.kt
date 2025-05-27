@@ -1,7 +1,7 @@
 package stepan.gorokhov.viboranet.tests.api.models
 
 data class TournamentTestOption(
-    val id: String,
+    val index: Int,
     val title: String,
     val description: String,
     val image: String

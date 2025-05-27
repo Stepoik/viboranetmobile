@@ -5,7 +5,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.coreData)
+            api(projects.coreData)
             implementation(projects.features.home.tests.api)
         }
     }

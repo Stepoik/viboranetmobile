@@ -17,7 +17,9 @@ actual fun MainTestsScreenPreview() {
         title = "Мега",
         description = "тест",
         image = "",
-        author = TestAuthorVO("", "")
+        author = TestAuthorVO("", "", ""),
+        rating = 0,
+        localRating = 0
     )
     val state = MainTestsState(
         tests = persistentListOf(test)

@@ -40,7 +40,7 @@ private fun Pair<TournamentTestOption, TournamentTestOption>.toVO(): Pair<TestOp
 
 private fun TournamentTestOption.toVO(): TestOptionVO {
     return TestOptionVO(
-        id = id,
+        index = index,
         image = image,
         title = title
     )

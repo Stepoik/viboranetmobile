@@ -13,8 +13,7 @@ val BASE_KTOR_CLIENT_QUALIFIER = qualifier("BASE_KTOR_CLIENT")
 internal expect fun platformModule(): Module
 
 val coreDataModule = module {
-    factory { TokenHolder(get()) }
-    single(qualifier = AUTHORIZED_KTOR_CLIENT_QUALIFIER) { createAuthorizedHttpClient(get(), get()) }
+    single(qualifier = AUTHORIZED_KTOR_CLIENT_QUALIFIER) { createAuthorizedHttpClient(get()) }
     single(qualifier = BASE_KTOR_CLIENT_QUALIFIER) { createBaseHttpClient() }
 
     includes(platformModule())

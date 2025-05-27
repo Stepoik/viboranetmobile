@@ -1,8 +1,8 @@
-@file:JvmName("MessageDtoKt")
-
 package stepan.gorokhov.viboranet.chat.data.network.models
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import stepan.gorokhov.viboranet.chat.api.models.Message
@@ -10,16 +10,16 @@ import stepan.gorokhov.viboranet.chat.api.models.MessageAuthor
 
 @Serializable
 data class MessageDto(
-    @SerialName("id")
+    @SerialName("Id")
     val id: String,
-    @SerialName("content")
+    @SerialName("Content")
     val content: String,
-    @SerialName("user_id")
+    @SerialName("UserId")
     val userId: String,
-    @SerialName("username")
+    @SerialName("Username")
     val username: String,
-    @SerialName("timestamp")
-    val timestamp: LocalDateTime
+    @SerialName("Timestamp")
+    val timestamp: String
 )
 
 fun MessageDto.toMessage(): Message {
@@ -29,6 +29,7 @@ fun MessageDto.toMessage(): Message {
         author = MessageAuthor(
             id = userId,
             name = username
-        )
+        ),
+        timestamp = Instant.parse(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
     )
 }

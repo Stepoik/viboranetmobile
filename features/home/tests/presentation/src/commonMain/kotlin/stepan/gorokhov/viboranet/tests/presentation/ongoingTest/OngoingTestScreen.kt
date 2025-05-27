@@ -6,6 +6,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import org.koin.compose.viewmodel.koinViewModel
 import stepan.gorokhov.viboranet.coreui.mvi.rememberUIEventHandler
+import stepan.gorokhov.viboranet.tests.presentation.TestsRoute
 import stepan.gorokhov.viboranet.tests.presentation.ongoingTest.screens.FinishingScreen
 import stepan.gorokhov.viboranet.tests.presentation.ongoingTest.screens.OngoingTestScreen
 import stepan.gorokhov.viboranet.tests.presentation.testResult.navigateTestResult
@@ -19,7 +20,7 @@ internal fun OngoingTestScreen(navController: NavController) {
 
         viewModel.effect.collect { effect ->
             when (effect) {
-                is OngoingTestEffect.NavigateResult -> navController.navigateTestResult(effect.resultId)
+                is OngoingTestEffect.NavigateResult -> navController.navigateTestResult(effect.resultId) { popUpTo(TestsRoute.Main.route) }
             }
         }
     }

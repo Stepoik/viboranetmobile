@@ -11,9 +11,9 @@ data class MainProfileState(
 ) : UIState
 
 data class MainProfileViewModelState(
-    val username: String = "",
-    val avatarUrl: String? = null,
     val loading: Boolean = false,
+    val username: String = "",
+    val avatarUrl: String = "",
     val error: String? = null
 ) : ViewModelState<MainProfileState> {
     override fun toScreenState(): MainProfileState = MainProfileState(
@@ -22,4 +22,4 @@ data class MainProfileViewModelState(
         loading = loading,
         error = error
     )
-} 
+}

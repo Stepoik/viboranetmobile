@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -40,6 +41,14 @@ fun ChatScreen() {
 
     LaunchedEffect(Unit) {
         eventHandler.handleEvent(ChatEvent.LoadMessages)
+    }
+
+    DisposableEffect(Unit) {
+        eventHandler.handleEvent(ChatEvent.ConnectChat)
+
+        onDispose {
+            eventHandler.handleEvent(ChatEvent.DisconnectChat)
+        }
     }
 
     when {
@@ -147,10 +156,28 @@ private fun MessageItem(message: MessageVO) {
                 .padding(12.dp),
             horizontalAlignment = if (message.isFromMe) Alignment.End else Alignment.Start
         ) {
+            // Имя автора
+            if (!message.isFromMe) {
+                Text(
+                    text = message.author.username,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = textColor.copy(alpha = 0.7f)
+                )
+                VerticalSpacer(4.dp)
+            }
+            
+            // Текст сообщения
             Text(
                 text = message.text,
                 color = textColor,
                 style = MaterialTheme.typography.bodyLarge
+            )
+            
+            // Время отправки
+            Text(
+                text = message.time,
+                style = MaterialTheme.typography.labelSmall,
+                color = textColor.copy(alpha = 0.7f)
             )
         }
     }

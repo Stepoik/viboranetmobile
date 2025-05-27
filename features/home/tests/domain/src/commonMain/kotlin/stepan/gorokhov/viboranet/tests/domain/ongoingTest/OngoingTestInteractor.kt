@@ -8,9 +8,11 @@ import stepan.gorokhov.viboranet.tests.api.models.TournamentStage
 import stepan.gorokhov.viboranet.tests.api.models.TournamentTest
 import stepan.gorokhov.viboranet.tests.api.models.TournamentTestOption
 import stepan.gorokhov.viboranet.tests.api.repositories.TestRepository
+import stepan.gorokhov.viboranet.tests.api.repositories.TestResultRepository
 
 class OngoingTestInteractor(
-    private val testRepository: TestRepository
+    private val testRepository: TestRepository,
+    private val resultRepository: TestResultRepository
 ) {
     private val _state =
         MutableStateFlow<OngoingTestInteractorState>(OngoingTestInteractorState.Idle)
@@ -25,15 +27,15 @@ class OngoingTestInteractor(
         return Result.success(Unit)
     }
 
-    suspend fun pickOption(id: String): Result<Any?> {
+    suspend fun pickOption(index: Int): Result<Any?> {
         val state = _state.value
         if (state !is OngoingTestInteractorState.Started)
             return Result.failure(IllegalStateException())
 
         val options = state.currentOptions
-        val pickedOption = when (id) {
-            options.first.id -> options.first
-            options.second.id -> options.second
+        val pickedOption = when (index) {
+            options.first.index -> options.first
+            options.second.index -> options.second
             else -> return Result.failure(IllegalStateException())
         }
 
@@ -99,12 +101,9 @@ class OngoingTestInteractor(
         if (state !is OngoingTestInteractorState.Started) return
 
         _state.update { OngoingTestInteractorState.Finishing }
-        val testId = state.tournamentTest.id
-        val tournamentResult = TournamentResult(
-            testId = testId,
-            stages = stages
-        )
-        val saveResult = testRepository.saveTournamentResult(result = tournamentResult)
+
+        val tournamentResult = state.toNewResult(stages)
+        val saveResult = resultRepository.saveTournamentResult(result = tournamentResult)
         saveResult.onFailure {
             _state.update { state }
         }.onSuccess { resultId ->
