@@ -53,6 +53,11 @@ include(":features:home:chat:domain")
 include(":features:home:chat:data")
 include(":features:home:chat:presentation")
 
+include(":features:home:leaderboard:api")
+include(":features:home:leaderboard:data")
+include(":features:home:leaderboard:presentation")
+
+
 
 include(":features:splash")
 

@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import stepan.gorokhov.viboranet.chat.chat
 import stepan.gorokhov.viboranet.home.route.HomeRoute
+import stepan.gorokhov.viboranet.leaderboard.presentation.leaderboard
 import stepan.gorokhov.viboranet.profile.profile
 import stepan.gorokhov.viboranet.tests.presentation.tests
 
@@ -35,6 +36,7 @@ fun HomeScreen(parentNavController: NavController) {
                 tests(navController)
                 chat()
                 profile(navController)
+                leaderboard(navController)
             }
         }
     }

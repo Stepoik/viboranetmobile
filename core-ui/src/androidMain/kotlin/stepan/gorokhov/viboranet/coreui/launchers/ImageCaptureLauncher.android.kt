@@ -1,23 +1,19 @@
 package stepan.gorokhov.viboranet.coreui.launchers
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
+import android.content.ContentResolver
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.FileProvider
-import androidx.core.net.toUri
 import stepan.gorokhov.viboranet.coreui.models.StableImage
-import java.io.File
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
 
 @Composable
 actual fun rememberImageCaptureLauncher(
@@ -25,48 +21,46 @@ actual fun rememberImageCaptureLauncher(
     onCancel: () -> Unit
 ): Launcher {
     val context = LocalContext.current
-    var imageFileState by remember { mutableStateOf<File?>(null) }
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val imageUri = imageFileState?.toUri() ?: run {
-                onCancel()
-                return@rememberLauncherForActivityResult
+    val contentResolver: ContentResolver = context.contentResolver
+    val galleryLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let {
+                val bytes = getBitmapFromUri(uri, contentResolver)?.toByteArray(COMPRESSION_QUALITY)
+                bytes?.let {
+                    onSuccess(StableImage(it))
+                    return@rememberLauncherForActivityResult
+                }
             }
-            val inputStream = context.contentResolver.openInputStream(imageUri)
-            val bytes = inputStream?.readBytes()
-            if (bytes != null) {
-                onSuccess(StableImage(bytes))
-            } else onCancel()
-        } else onCancel()
-    }
-    return remember(launcher, context) {
+            onCancel()
+        }
+    return remember {
         Launcher {
-            val imageFile = createImageFile(context)
-            imageFileState = imageFile
-            val imageUri = getFileUri(context = context, file = imageFile)
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-                putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-            }
-            launcher.launch(intent)
+            galleryLauncher.launch(
+                PickVisualMediaRequest(
+                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                )
+            )
         }
     }
 }
 
-private const val BASE_FILE_NAME = "extra_image_file"
+internal const val COMPRESSION_QUALITY = 70
 
-private fun createImageFile(context: Context): File {
-    val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-
-    return File.createTempFile(
-        BASE_FILE_NAME,
-        ".jpg",
-        storageDir
-    )
+fun getBitmapFromUri(uri: Uri, contentResolver: ContentResolver): Bitmap? {
+    val inputStream: InputStream?
+    try {
+        inputStream = contentResolver.openInputStream(uri)
+        val s = BitmapFactory.decodeStream(inputStream)
+        inputStream?.close()
+        return s
+    } catch (e: Exception) {
+        Log.d("getBitmapFromUri", e.message ?: "")
+        return null
+    }
 }
 
-private fun getFileUri(context: Context, file: File): Uri {
-    return FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+fun Bitmap.toByteArray(quality: Int): ByteArray {
+    val outputStream = ByteArrayOutputStream()
+    compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+    return outputStream.toByteArray()
 }

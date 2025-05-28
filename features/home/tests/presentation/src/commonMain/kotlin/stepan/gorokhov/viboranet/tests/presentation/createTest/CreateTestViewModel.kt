@@ -3,14 +3,15 @@ package stepan.gorokhov.viboranet.tests.presentation.createTest
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
 import stepan.gorokhov.viboranet.common.api.repositories.ImageRepository
 import stepan.gorokhov.viboranet.coredata.network.NetworkConstants
 import stepan.gorokhov.viboranet.coreui.models.StableImage
 import stepan.gorokhov.viboranet.coreui.mvi.BaseViewModel
+import stepan.gorokhov.viboranet.coreui.validation.isFailed
 import stepan.gorokhov.viboranet.tests.api.repositories.TestRepository
 
 class CreateTestViewModel(
+    private val testId: String? = null,
     private val imageRepository: ImageRepository,
     private val testRepository: TestRepository
 ) : BaseViewModel<CreateTestState, CreateTestViewModelState, CreateTestEffect, CreateTestEvent>() {
@@ -19,6 +20,8 @@ class CreateTestViewModel(
     override fun handleEvent(event: CreateTestEvent) {
         viewModelScope.launch {
             when (event) {
+                is CreateTestEvent.LoadTest -> loadTest()
+
                 is CreateTestEvent.UpdateTitle -> {
                     _state.update { it.copy(title = event.title) }
                 }
@@ -63,7 +66,15 @@ class CreateTestViewModel(
         if (_state.value.loading) return
 
         _state.update { it.copy(loading = true) }
-        testRepository.createTest(_state.value.toCreateTest()).onSuccess {
+        val state = _state.value
+        if (state.validate().isFailed) return
+
+        val newTest = state.toCreateTest()
+        if (testId == null) {
+            testRepository.createTest(newTest)
+        } else {
+            testRepository.updateTest(testId, newTest)
+        }.onSuccess {
             _effect.emit(CreateTestEffect.NavigateBack)
         }
         _state.update { it.copy(loading = false) }
@@ -97,6 +108,16 @@ class CreateTestViewModel(
                 newOptions[index] = newOption
                 _state.update { it.copy(answerOptions = newOptions) }
             }
+        }
+    }
+
+    private suspend fun loadTest() {
+        if (testId == null) return
+
+        testRepository.getTournamentTest(testId).onSuccess { test ->
+            _state.update { test.toCreateTestViewModelState(it) }
+        }.onFailure {
+            _state.update { it.copy(error = "Не удалось загрузить тест")}
         }
     }
 } 

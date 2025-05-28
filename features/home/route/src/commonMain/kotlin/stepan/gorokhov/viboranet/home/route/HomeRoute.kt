@@ -12,4 +12,8 @@ sealed class HomeRoute : BaseRoute {
     data object Profile : HomeRoute() {
         override val route: String = "profile"
     }
+
+    data object Leaderboard : HomeRoute() {
+        override val route: String = "leaderboard"
+    }
 }

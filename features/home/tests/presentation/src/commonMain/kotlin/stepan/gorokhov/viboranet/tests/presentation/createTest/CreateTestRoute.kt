@@ -7,6 +7,6 @@ import stepan.gorokhov.viboranet.tests.presentation.TestsRoute
 
 fun NavGraphBuilder.createTest(navController: NavController) {
     composable(TestsRoute.CreateTest.route) {
-        CreateTestScreen(navController)
+        CreateTestScreen(navController, testId = null)
     }
 }

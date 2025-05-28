@@ -7,10 +7,11 @@ import stepan.gorokhov.viboranet.tests.api.models.ResultOption
 import stepan.gorokhov.viboranet.tests.api.models.TournamentStage
 
 suspend fun OngoingTestInteractorState.Started.toNewResult(
-    lastStages: List<TournamentStage>
+    stages: List<TournamentStage>
 ): NewTournamentResult = withContext(Dispatchers.Default) {
     val scores = IntArray(tournamentTest.options.size)
-    for (stage in stages + lastStages) {
+    for (stage in stages) {
+        println(stage)
         for (option in stage.options) {
             scores[option.index]++
         }

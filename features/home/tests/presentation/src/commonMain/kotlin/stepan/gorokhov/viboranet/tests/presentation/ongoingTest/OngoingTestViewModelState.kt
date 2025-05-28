@@ -42,6 +42,7 @@ private fun TournamentTestOption.toVO(): TestOptionVO {
     return TestOptionVO(
         index = index,
         image = image,
-        title = title
+        title = title,
+        description = description
     )
 }

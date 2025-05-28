@@ -4,6 +4,7 @@ import stepan.gorokhov.viboranet.coreui.models.StableImage
 import stepan.gorokhov.viboranet.coreui.mvi.UIEvent
 
 sealed class CreateTestEvent : UIEvent {
+    data object LoadTest : CreateTestEvent()
     data class UpdateTitle(val title: String) : CreateTestEvent()
     data class UpdateDescription(val description: String) : CreateTestEvent()
     data class AddTag(val tag: String) : CreateTestEvent()

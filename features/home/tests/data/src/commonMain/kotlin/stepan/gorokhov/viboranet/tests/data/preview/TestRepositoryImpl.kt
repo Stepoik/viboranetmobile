@@ -5,9 +5,10 @@ import stepan.gorokhov.viboranet.tests.api.models.TestPreview
 import stepan.gorokhov.viboranet.tests.api.models.TournamentTest
 import stepan.gorokhov.viboranet.tests.api.models.Vote
 import stepan.gorokhov.viboranet.tests.api.repositories.TestRepository
-import stepan.gorokhov.viboranet.tests.data.preview.mappers.toRequest
+import stepan.gorokhov.viboranet.tests.data.preview.mappers.toCreateRequest
 import stepan.gorokhov.viboranet.tests.data.preview.mappers.toTestPreview
 import stepan.gorokhov.viboranet.tests.data.preview.mappers.toTournament
+import stepan.gorokhov.viboranet.tests.data.preview.mappers.toUpdateRequest
 import stepan.gorokhov.viboranet.tests.data.preview.network.TestApi
 import stepan.gorokhov.viboranet.tests.data.preview.network.models.VoteForTestRequest
 
@@ -16,7 +17,13 @@ class TestRepositoryImpl(
 ) : TestRepository {
     override suspend fun createTest(test: CreateTournamentTest): Result<String> {
         return runCatching {
-            testApi.createTest(test.toRequest()).id
+            testApi.createTest(test.toCreateRequest()).id
+        }
+    }
+
+    override suspend fun updateTest(id: String, test: CreateTournamentTest): Result<String> {
+        return runCatching {
+            testApi.updateTest(id, test.toUpdateRequest()).id
         }
     }
 
@@ -32,8 +39,21 @@ class TestRepositoryImpl(
         }
     }
 
-    override suspend fun searchTests(text: String): Result<List<TestPreview>> {
-        TODO("Not yet implemented")
+    override suspend fun searchTests(text: String, offset: Long): Result<List<TestPreview>> {
+        return runCatching {
+            testApi.getTests(offset = offset, limit = BASE_LIMIT, title = text)
+                .map { it.toTestPreview() }
+        }
+    }
+
+    override suspend fun getTestsByAuthor(
+        authorId: String,
+        offset: Long
+    ): Result<List<TestPreview>> {
+        return runCatching {
+            testApi.getTests(offset = offset, limit = BASE_LIMIT, authorId = authorId)
+                .map { it.toTestPreview() }
+        }
     }
 
     override suspend fun getTournamentTest(id: String): Result<TournamentTest> {

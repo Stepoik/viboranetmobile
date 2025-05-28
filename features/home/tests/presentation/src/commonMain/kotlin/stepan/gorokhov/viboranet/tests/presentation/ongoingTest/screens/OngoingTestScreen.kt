@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,8 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.stringResource
+import stepan.gorokhov.viboranet.coreui.coil.AsyncImage
 import stepan.gorokhov.viboranet.coreui.mvi.EventHandler
 import stepan.gorokhov.viboranet.tests.presentation.ongoingTest.OngoingTestEvent
 import stepan.gorokhov.viboranet.tests.presentation.ongoingTest.OngoingTestState
@@ -78,7 +81,7 @@ private fun TestOption(
     onClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier.height(IntrinsicSize.Max)) {
+    Box(modifier = modifier.height(IntrinsicSize.Max).clip(RoundedCornerShape(16.dp))) {
         AsyncImage(
             testOption.image,
             contentDescription = testOption.title,
@@ -99,5 +102,25 @@ private fun TestOption(
                 .clip(RoundedCornerShape(16.dp))
                 .align(Alignment.Center)
         )
+        
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .background(Color.Black.copy(alpha = 0.7f))
+                .padding(16.dp)
+        ) {
+            Text(
+                text = testOption.title,
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = testOption.description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.8f)
+            )
+        }
     }
 }

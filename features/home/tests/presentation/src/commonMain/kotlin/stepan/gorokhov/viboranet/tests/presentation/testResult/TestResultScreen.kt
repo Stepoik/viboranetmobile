@@ -1,6 +1,8 @@
 package stepan.gorokhov.viboranet.tests.presentation.testResult
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
@@ -38,6 +41,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import stepan.gorokhov.viboranet.coreui.coil.AsyncImage
 import stepan.gorokhov.viboranet.coreui.mvi.EventHandler
 import stepan.gorokhov.viboranet.tests.api.models.TournamentResultOption
+import stepan.gorokhov.viboranet.uikit.components.BaseScaffold
 
 @Composable
 fun TestResultScreen(
@@ -64,7 +68,7 @@ fun TestResultScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TestResultScreen(state: TestResultState, eventHandler: EventHandler<TestResultEvent>) {
-    Scaffold(
+    BaseScaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Результаты теста", fontSize = 20.sp) },
@@ -75,14 +79,13 @@ private fun TestResultScreen(state: TestResultState, eventHandler: EventHandler<
                 }
             )
         }
-    ) { paddingValues ->
+    ) {
         when (state) {
             is TestResultState.Idle -> Unit
             is TestResultState.Loading -> {}
             is TestResultState.Error -> {}
             is TestResultState.ResultLoaded -> ResultContent(
-                options = state.options,
-                modifier = Modifier.padding(paddingValues)
+                options = state.options
             )
         }
     }
@@ -99,7 +102,10 @@ private fun ResultContent(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(options) { option ->
-            ResultItem(option = option)
+            ResultItem(
+                option = option,
+                position = options.indexOf(option) + 1
+            )
         }
     }
 }
@@ -107,6 +113,7 @@ private fun ResultContent(
 @Composable
 private fun ResultItem(
     option: TournamentResultOption,
+    position: Int,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -119,6 +126,23 @@ private fun ResultItem(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Позиция
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = position.toString(),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
             AsyncImage(
                 model = option.image,
                 contentDescription = null,

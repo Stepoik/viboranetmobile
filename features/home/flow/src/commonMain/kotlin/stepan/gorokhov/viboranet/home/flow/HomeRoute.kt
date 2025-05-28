@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -11,11 +12,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import stepan.gorokhov.viboranet.common.presentation.ApplicationRoute
 import stepan.gorokhov.viboranet.home.route.HomeRoute
 
@@ -39,6 +40,11 @@ sealed class BottomNavItem(
         title = "Профиль",
         icon = { Icon(Icons.Default.Person, contentDescription = null) }
     )
+    data object Leaderboard : BottomNavItem(
+        route = HomeRoute.Leaderboard.route,
+        title = "Лидерборд",
+        icon = { Icon(Icons.Default.Star, contentDescription = null) }
+    )
 }
 
 @Composable
@@ -46,20 +52,21 @@ fun BottomNavigation(navController: NavHostController) {
     val items = listOf(
         BottomNavItem.Tests,
         BottomNavItem.Chat,
-        BottomNavItem.Profile
+        BottomNavItem.Profile,
+        BottomNavItem.Leaderboard
     )
-    
+    val currentDestination =
+        navController.currentBackStackEntryAsState().value?.destination
     NavigationBar {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
-        
         items.forEach { item ->
+            val selected =
+                currentDestination?.hierarchy?.any { it.route == item.route } == true
             NavigationBarItem(
                 icon = item.icon,
                 label = { Text(item.title) },
-                selected = currentRoute == item.route,
+                selected = selected,
                 onClick = {
-                    if (currentRoute != item.route) {
+                    if (!selected) {
                         navController.navigate(item.route) {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true

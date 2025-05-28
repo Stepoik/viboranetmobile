@@ -5,5 +5,5 @@ import stepan.gorokhov.viboranet.coredata.di.AUTHORIZED_KTOR_CLIENT_QUALIFIER
 import stepan.gorokhov.viboranet.coreui.coil.authorizedImageLoader
 
 val coreUiModule = module {
-    factory { authorizedImageLoader(get(AUTHORIZED_KTOR_CLIENT_QUALIFIER), get()) }
+    single(createdAtStart = true) { authorizedImageLoader(get(AUTHORIZED_KTOR_CLIENT_QUALIFIER), get()) }
 }

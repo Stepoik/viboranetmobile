@@ -5,5 +5,5 @@ import org.koin.dsl.module
 import stepan.gorokhov.viboranet.profile.main.MainProfileViewModel
 
 val profileModule = module {
-    viewModel { MainProfileViewModel(get(), get()) }
+    viewModel { MainProfileViewModel(get(), get(), get()) }
 }

@@ -9,11 +9,15 @@ import stepan.gorokhov.viboranet.tests.api.models.Vote
 interface TestRepository {
     suspend fun createTest(test: CreateTournamentTest): Result<String>
 
+    suspend fun updateTest(id: String, test: CreateTournamentTest): Result<String>
+
     suspend fun getTestPreviews(offset: Long): Result<List<TestPreview>>
 
     suspend fun getTestPreview(id: String): Result<TestPreview>
 
-    suspend fun searchTests(text: String): Result<List<TestPreview>>
+    suspend fun searchTests(text: String, offset: Long): Result<List<TestPreview>>
+
+    suspend fun getTestsByAuthor(authorId: String, offset: Long): Result<List<TestPreview>>
 
     suspend fun getTournamentTest(id: String): Result<TournamentTest>
 

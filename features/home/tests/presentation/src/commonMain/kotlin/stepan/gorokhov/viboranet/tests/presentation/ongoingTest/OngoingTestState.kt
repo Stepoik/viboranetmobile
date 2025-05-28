@@ -22,7 +22,8 @@ sealed class OngoingTestState : UIState {
 data class TestOptionVO(
     val index: Int,
     val image: String,
-    val title: String
+    val title: String,
+    val description: String
 )
 
 sealed class OngoingTestEvent : UIEvent {

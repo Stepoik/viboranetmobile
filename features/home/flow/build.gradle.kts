@@ -11,6 +11,7 @@ kotlin {
             implementation(projects.features.home.tests.presentation)
             implementation(projects.features.home.chat.presentation)
             implementation(projects.features.home.profile.presentation)
+            implementation(projects.features.home.leaderboard.presentation)
             implementation(projects.features.common.presentation)
         }
     }

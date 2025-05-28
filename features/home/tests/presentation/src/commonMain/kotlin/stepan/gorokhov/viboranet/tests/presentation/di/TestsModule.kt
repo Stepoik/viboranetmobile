@@ -14,6 +14,7 @@ import stepan.gorokhov.viboranet.tests.presentation.createTest.CreateTestViewMod
 import stepan.gorokhov.viboranet.tests.presentation.main.MainTestsViewModel
 import stepan.gorokhov.viboranet.tests.presentation.ongoingTest.OngoingTestScreen
 import stepan.gorokhov.viboranet.tests.presentation.ongoingTest.OngoingTestViewModel
+import stepan.gorokhov.viboranet.tests.presentation.search.SearchViewModel
 import stepan.gorokhov.viboranet.tests.presentation.testResult.TestResultViewModel
 import stepan.gorokhov.viboranet.tests.presentation.testpreview.TestPreviewViewModel
 
@@ -28,7 +29,8 @@ val testsModule = module {
 
     viewModel { MainTestsViewModel(get()) }
     viewModel { OngoingTestViewModel(get(), get()) }
-    viewModel { CreateTestViewModel(get(), get()) }
+    viewModel { params -> CreateTestViewModel(params.get(), get(), get()) }
     viewModel { TestPreviewViewModel(get(), get()) }
     viewModel { TestResultViewModel(get(), get()) }
+    viewModel { SearchViewModel(get()) }
 }

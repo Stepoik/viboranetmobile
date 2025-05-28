@@ -11,6 +11,8 @@ kotlin {
             implementation(projects.features.home.profile.api)
             implementation(projects.features.home.profile.data)
             implementation(projects.features.common.api)
+            implementation(projects.features.home.tests.api)
+            implementation(projects.features.home.tests.presentation)
 
             implementation(Dependencies.Coil.compose)
             implementation(Dependencies.Coil.ktor)

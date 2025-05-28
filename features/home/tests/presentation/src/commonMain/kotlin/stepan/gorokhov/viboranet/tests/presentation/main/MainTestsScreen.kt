@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,6 +19,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -30,6 +32,7 @@ import stepan.gorokhov.viboranet.tests.presentation.main.components.SearchButton
 import stepan.gorokhov.viboranet.tests.presentation.main.components.tests
 import stepan.gorokhov.viboranet.tests.presentation.testpreview.navigateTestPreview
 import stepan.gorokhov.viboranet.tests.presentation.ongoingTest.navigateOngoingTest
+import stepan.gorokhov.viboranet.tests.presentation.search.SearchEvent
 import stepan.gorokhov.viboranet.uikit.components.BaseScaffold
 import stepan.gorokhov.viboranet.uikit.components.verticalSpacer
 import viboranet.features.home.tests.presentation.generated.resources.Res
@@ -101,11 +104,22 @@ private fun TestList(state: MainTestsState, eventHandler: EventHandler<MainTests
         modifier = Modifier
             .fillMaxSize()
     ) {
-        LazyColumn(Modifier.fillMaxSize()) {
+        val lazyState = rememberLazyListState()
+        LaunchedEffect(lazyState) {
+            snapshotFlow {
+                lazyState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+            }.collect { lastIndex ->
+                if (lastIndex != null && lastIndex >= state.tests.size - 3) {
+                    eventHandler.handleEvent(MainTestsEvent.LoadTests)
+                }
+            }
+        }
+
+        LazyColumn(Modifier.fillMaxSize(), state = lazyState) {
             stickyHeader {
                 Column(
                     Modifier.background(MaterialTheme.colorScheme.background)
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp, vertical = 16.dp)
                 ) {
                     Text(
                         stringResource(Res.string.tests),
