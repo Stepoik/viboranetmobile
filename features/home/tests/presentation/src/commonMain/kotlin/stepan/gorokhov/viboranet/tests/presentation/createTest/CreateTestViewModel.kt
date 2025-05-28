@@ -11,7 +11,7 @@ import stepan.gorokhov.viboranet.coreui.validation.isFailed
 import stepan.gorokhov.viboranet.tests.api.repositories.TestRepository
 
 class CreateTestViewModel(
-    private val testId: String? = null,
+    private val testId: String,
     private val imageRepository: ImageRepository,
     private val testRepository: TestRepository
 ) : BaseViewModel<CreateTestState, CreateTestViewModelState, CreateTestEffect, CreateTestEvent>() {
@@ -70,7 +70,7 @@ class CreateTestViewModel(
         if (state.validate().isFailed) return
 
         val newTest = state.toCreateTest()
-        if (testId == null) {
+        if (testId.isEmpty()) {
             testRepository.createTest(newTest)
         } else {
             testRepository.updateTest(testId, newTest)
@@ -112,7 +112,7 @@ class CreateTestViewModel(
     }
 
     private suspend fun loadTest() {
-        if (testId == null) return
+        if (testId.isEmpty()) return
 
         testRepository.getTournamentTest(testId).onSuccess { test ->
             _state.update { test.toCreateTestViewModelState(it) }

@@ -55,7 +55,7 @@ import stepan.gorokhov.viboranet.uikit.components.verticalSpacer
 
 @Composable
 fun CreateTestScreen(navController: NavController, testId: String?) {
-    val viewModel = koinViewModel<CreateTestViewModel>(parameters = { parametersOf(testId) })
+    val viewModel = koinViewModel<CreateTestViewModel>(parameters = { parametersOf(testId ?: "") })
     val state = viewModel.state.collectAsState().value
     val eventHandler = rememberUIEventHandler(viewModel)
 
